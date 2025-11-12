@@ -121,6 +121,22 @@ A mobile todo app that applies behavioral science principles (BJ Fogg's Behavior
 
 ---
 
+## Core Differentiators
+
+**What makes this app unique** (vs standard todo apps):
+
+1. **Smart Scheduling**: AI finds optimal calendar slots for tasks based on energy patterns
+2. **Contextual Intelligence**: "I have 15 mins" → AI recommends best task for RIGHT NOW
+3. **Goal Visibility**: Every task shows real-time impact on bigger goals (motivation boost)
+4. **Psychological Optimization**: Reminders reframed using behavioral science for max motivation
+5. **Failure Prevention**: AI predicts and warns about likely failures BEFORE they happen
+6. **Adaptive Modes**: Same tasks, different views based on mental state (Deep Work, Sprint, Habit modes)
+7. **Dependency Intelligence**: Surfaces "unblocking tasks" that enable the most downstream work
+
+**Detailed feature concepts**: See `docs/FEATURE_CONCEPTS.md` (15+ concepts documented)
+
+---
+
 ## Feature Implementation Plan
 
 ### Phase 1: Foundation (Weeks 1-2)
@@ -129,11 +145,20 @@ A mobile todo app that applies behavioral science principles (BJ Fogg's Behavior
 **Goals**:
 - [x] Project setup with Expo
 - [x] Documentation created
+- [x] Feature concepts brainstormed (15+ unique concepts in FEATURE_CONCEPTS.md)
 - [ ] Supabase integration
 - [ ] User authentication
 - [ ] Basic task CRUD (Create, Read, Update, Delete)
+- [ ] **NEW**: Goal-task linking in database schema
+- [ ] **NEW**: "I Have X Minutes" recommendation engine (basic version)
+- [ ] **NEW**: Simple task dependency detection
 - [ ] First TDD cycle complete
 - [ ] Custom Claude Code command created
+
+**Why these additions**:
+- Goal-task linking enables Phase 2 progress visualization
+- "I Have X Minutes" is a core differentiator (high ROI early)
+- Dependency detection sets up Phase 2 intelligent scheduling
 
 **Claude Code Learning**: Basic TDD, git workflow, custom commands
 
@@ -147,14 +172,27 @@ A mobile todo app that applies behavioral science principles (BJ Fogg's Behavior
 - [ ] Progress tracking with celebration triggers
 - [ ] Weekly reset with reflection prompts
 - [ ] Habit streak system
+- [ ] **NEW**: Smart Calendar Tetris (AI finds optimal task time slots)
+- [ ] **NEW**: Work Styles context switching (Deep Work, Sprint, Habit modes)
+- [ ] **NEW**: Micro-goal momentum milestones (break large goals into celebrations)
+- [ ] **NEW**: Energy-Task Matching (match cognitive load to current energy state)
+- [ ] **NEW**: Context-Locked Implementation Intentions (sensor-based anchor detection)
+
+**Why these additions**:
+- Smart Calendar Tetris differentiates from ALL other todo apps (unique feature)
+- Work Styles prevents overwhelm by contextual filtering
+- Micro-milestones maintain motivation through long projects
+- Energy matching increases completion rates (right task, right state)
+- Context-locking makes Implementation Intentions 2-3x more effective (research-backed)
 
 **Claude Code Learning**: Agents, complex state, worktrees
 
 **Behavioral Science Applied**:
 - **Fogg's B=MAP**: Behavior = Motivation × Ability × Prompt
-- **Implementation Intentions**: Specific "when-then" task structure
-- **Small Wins**: Celebrate micro-progress
-- **Fresh Start Effect**: Weekly resets boost motivation
+- **Implementation Intentions**: Specific "when-then" task structure (enhanced with sensors)
+- **Small Wins**: Celebrate micro-progress (milestone system)
+- **Fresh Start Effect**: Weekly resets + multiple daily temporal anchors
+- **Energy Management**: Match task difficulty to cognitive capacity
 
 ---
 
@@ -162,10 +200,25 @@ A mobile todo app that applies behavioral science principles (BJ Fogg's Behavior
 
 **Goals**:
 - [ ] AI behavioral coaching (GPT-4/Claude integration)
+  - [ ] **Specific**: Psychological Reframing Engine (task reminders using dark psychology, loss aversion, identity framing)
+  - [ ] **Specific**: Predictive Failure Warnings (ML model predicts task failure before it happens)
 - [ ] Data visualization (progress charts)
+  - [ ] **Enhanced**: Goal progress with velocity tracking
+  - [ ] **Enhanced**: Dependency chain visualization
 - [ ] Social features (accountability partner)
+  - [ ] **Specific**: Social Goal Witnesses (progress updates without task visibility)
+  - [ ] **Specific**: Rotating Accountability Pods (3-4 people, weekly rotating judge)
+  - [ ] **Specific**: Commitment Contracts with stakes
 - [ ] Custom behavioral experiments
+  - [ ] **Enhanced**: A/B testing framework for celebration types
+  - [ ] **Enhanced**: Temporal manipulation (deadline compression, commitment ceremonies)
 - [ ] Export/analytics
+
+**Why these additions**:
+- Psychological Reframing = proven persuasion techniques (Cialdini, loss aversion)
+- Predictive Failures = prevents waste (catches problems early)
+- Social Witnesses = accountability without micromanagement
+- These are portfolio-worthy features showing PM + behavioral science depth
 
 **Claude Code Learning**: MCPs, complex integrations, deployment
 
@@ -179,10 +232,13 @@ A mobile todo app that applies behavioral science principles (BJ Fogg's Behavior
 - ✅ claude.md with project context
 - ✅ Git initialized
 - ✅ Basic project structure
+- ✅ Feature concept brainstorming (15+ concepts across behavioral science domains)
+- ✅ FEATURE_CONCEPTS.md created with detailed specifications
 
 ### In Progress
 - 🔄 Setting up Supabase account and project
 - 🔄 Testing Expo Go on iPhone
+- 🔄 Database schema design (incorporating goal-task linking, dependencies)
 
 ### Next Actions
 1. Test app loads on iPhone via Expo Go
@@ -355,3 +411,6 @@ From `../neural-vault/claude.md`:
 |------|--------|--------|
 | 2025-11-12 | Initial setup | Project creation |
 | 2025-11-12 | Tech stack selected | React Native + Expo + Supabase |
+| 2025-11-12 | Feature concepts brainstormed | Parallel agents explored 15+ unique features across behavioral science domains (Fogg, social psych, AI, temporal, environmental) |
+| 2025-11-12 | FEATURE_CONCEPTS.md created | Comprehensive documentation of all concepts with implementation priorities |
+| 2025-11-12 | Phase plans enhanced | Added specific features to each phase while preserving original goals |

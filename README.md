@@ -12,11 +12,23 @@ A mobile todo app based on behavioral science principles (BJ Fogg's Behavior Mod
 - Apply behavioral science principles to product design
 - Create compelling portfolio piece for PM interviews
 
+**What Makes This Different From Other Todo Apps**:
+1. **Smart Calendar Tetris**: AI finds optimal time slots based on your energy patterns
+2. **"I Have 15 Minutes"**: Get instant task recommendations based on available time and context
+3. **Goal-Aligned Progress**: See how each task impacts your bigger goals in real-time
+4. **Psychological Reframing**: Task reminders optimized using behavioral science
+5. **Work Styles Modes**: Switch between Deep Work, Sprint, Habit modes for focused task views
+6. **Predictive Intelligence**: Get warned about likely failures before they happen
+7. **Dependency Intelligence**: Surface high-impact "unblocking" tasks automatically
+
 **Behavioral Science Principles Applied**:
 - Implementation Intentions ("When X happens, I will Y")
 - Adaptive Difficulty (Fogg's Ability factor)
 - Small Wins and celebration triggers
-- Fresh Start Effect (weekly resets)
+- Fresh Start Effect (weekly + daily temporal anchors)
+- Loss Aversion & Identity Framing (psychological optimization)
+- Energy-Task Matching (cognitive load management)
+- Social Accountability (witnesses, pods)
 
 ---
 
@@ -187,23 +199,34 @@ npm test -- --coverage  # Generate coverage report
 
 ## Features (Roadmap)
 
-### Phase 1: Core Setup ✅
+### Phase 1: Foundation & Core Intelligence ✅ In Progress
 - [x] Project initialization
 - [x] Basic app structure
+- [x] Feature concept brainstorming (15+ unique concepts)
 - [ ] Supabase setup and authentication
-- [ ] Basic task CRUD
+- [ ] Basic task CRUD with goal linking
+- [ ] "I Have X Minutes" recommendation engine
+- [ ] Simple dependency detection
 
-### Phase 2: Behavioral Features
+### Phase 2: Behavioral Intelligence
 - [ ] Implementation Intentions (task prompts)
 - [ ] Adaptive difficulty algorithm
 - [ ] Progress tracking with celebrations
 - [ ] Weekly reset with reflection
+- [ ] Smart Calendar Tetris (AI scheduling)
+- [ ] Work Styles context switching
+- [ ] Micro-goal momentum milestones
+- [ ] Energy-Task Matching
 
-### Phase 3: Advanced
-- [ ] AI-powered behavioral coaching
+### Phase 3: Advanced AI & Social
+- [ ] AI-powered behavioral coaching (Psychological Reframing)
+- [ ] Predictive Failure Warnings
 - [ ] Habit streak tracking
-- [ ] Social accountability features
-- [ ] Data visualization
+- [ ] Social accountability features (Goal Witnesses, Accountability Pods)
+- [ ] Data visualization with velocity tracking
+- [ ] Temporal manipulation features
+
+**Detailed feature specifications**: See `docs/FEATURE_CONCEPTS.md`
 
 ---
 
