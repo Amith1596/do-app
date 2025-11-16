@@ -1,44 +1,35 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Portal, Modal, TextInput, Button, Text, Menu } from 'react-native-paper';
-import { useTasks } from '../contexts/TasksContext';
+import { Portal, Modal, TextInput, Button, Text } from 'react-native-paper';
 import { useGoals } from '../contexts/GoalsContext';
 
-interface AddTaskModalProps {
+interface AddGoalModalProps {
   visible: boolean;
   onDismiss: () => void;
 }
 
-export default function AddTaskModal({ visible, onDismiss }: AddTaskModalProps) {
+export default function AddGoalModal({ visible, onDismiss }: AddGoalModalProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [selectedGoalId, setSelectedGoalId] = useState<string | undefined>();
-  const [menuVisible, setMenuVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { createTask } = useTasks();
-  const { goals } = useGoals();
-
-  const selectedGoal = goals.find((g) => g.id === selectedGoalId);
+  const { createGoal } = useGoals();
 
   const handleSubmit = async () => {
     if (!title.trim()) return;
 
     setLoading(true);
     try {
-      await createTask({
+      await createGoal({
         title: title.trim(),
         description: description.trim() || undefined,
-        goalId: selectedGoalId,
-        completed: false,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
       setTitle('');
       setDescription('');
-      setSelectedGoalId(undefined);
       onDismiss();
     } catch (error) {
-      console.error('Error creating task:', error);
+      console.error('Error creating goal:', error);
     } finally {
       setLoading(false);
     }
@@ -53,11 +44,11 @@ export default function AddTaskModal({ visible, onDismiss }: AddTaskModalProps) 
       >
         <ScrollView>
           <Text variant="headlineSmall" style={styles.title}>
-            New Task
+            New Goal
           </Text>
 
           <TextInput
-            label="Task Title"
+            label="Goal Title"
             value={title}
             onChangeText={setTitle}
             mode="outlined"
@@ -74,38 +65,6 @@ export default function AddTaskModal({ visible, onDismiss }: AddTaskModalProps) 
             numberOfLines={3}
             style={styles.input}
           />
-
-          <Menu
-            visible={menuVisible}
-            onDismiss={() => setMenuVisible(false)}
-            anchor={
-              <Button
-                mode="outlined"
-                onPress={() => setMenuVisible(true)}
-                style={styles.input}
-              >
-                {selectedGoal ? `Goal: ${selectedGoal.title}` : 'Link to Goal (Optional)'}
-              </Button>
-            }
-          >
-            <Menu.Item
-              onPress={() => {
-                setSelectedGoalId(undefined);
-                setMenuVisible(false);
-              }}
-              title="No Goal"
-            />
-            {goals.map((goal) => (
-              <Menu.Item
-                key={goal.id}
-                onPress={() => {
-                  setSelectedGoalId(goal.id);
-                  setMenuVisible(false);
-                }}
-                title={goal.title}
-              />
-            ))}
-          </Menu>
 
           <View style={styles.buttons}>
             <Button
