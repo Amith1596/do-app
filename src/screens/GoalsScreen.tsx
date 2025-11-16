@@ -3,13 +3,22 @@ import { View, StyleSheet, FlatList } from 'react-native';
 import { FAB, Text, ActivityIndicator, Divider } from 'react-native-paper';
 import { useGoals } from '../contexts/GoalsContext';
 import { useTasks } from '../contexts/TasksContext';
+import { Goal } from '../types';
 import GoalItem from '../components/GoalItem';
 import AddGoalModal from '../components/AddGoalModal';
+import EditGoalModal from '../components/EditGoalModal';
 
 export default function GoalsScreen() {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
   const { goals, loading, deleteGoal } = useGoals();
   const { tasks } = useTasks();
+
+  const handleEditGoal = (goal: Goal) => {
+    setSelectedGoal(goal);
+    setEditModalVisible(true);
+  };
 
   const getTaskCount = (goalId: string) => {
     return tasks.filter((task) => task.goalId === goalId).length;
@@ -40,6 +49,7 @@ export default function GoalsScreen() {
               goal={item}
               taskCount={getTaskCount(item.id)}
               onDelete={() => deleteGoal(item.id)}
+              onEdit={() => handleEditGoal(item)}
             />
           )}
           ItemSeparatorComponent={() => <Divider />}
@@ -49,12 +59,21 @@ export default function GoalsScreen() {
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => setModalVisible(true)}
+        onPress={() => setAddModalVisible(true)}
       />
 
       <AddGoalModal
-        visible={modalVisible}
-        onDismiss={() => setModalVisible(false)}
+        visible={addModalVisible}
+        onDismiss={() => setAddModalVisible(false)}
+      />
+
+      <EditGoalModal
+        visible={editModalVisible}
+        goal={selectedGoal}
+        onDismiss={() => {
+          setEditModalVisible(false);
+          setSelectedGoal(null);
+        }}
       />
     </View>
   );

@@ -7,17 +7,18 @@ interface TaskItemProps {
   task: Task;
   onToggle: () => void;
   onDelete: () => void;
+  onEdit: () => void;
   onPress?: () => void;
 }
 
-export default function TaskItem({ task, onToggle, onDelete, onPress }: TaskItemProps) {
+export default function TaskItem({ task, onToggle, onDelete, onEdit, onPress }: TaskItemProps) {
   const theme = useTheme();
 
   return (
     <List.Item
       title={task.title}
       description={task.description}
-      onPress={onPress}
+      onPress={onEdit}
       left={() => (
         <Checkbox
           status={task.completed ? 'checked' : 'unchecked'}
@@ -25,11 +26,17 @@ export default function TaskItem({ task, onToggle, onDelete, onPress }: TaskItem
         />
       )}
       right={() => (
-        <IconButton
-          icon="delete"
-          iconColor={theme.colors.error}
-          onPress={onDelete}
-        />
+        <>
+          <IconButton
+            icon="pencil"
+            onPress={onEdit}
+          />
+          <IconButton
+            icon="delete"
+            iconColor={theme.colors.error}
+            onPress={onDelete}
+          />
+        </>
       )}
       style={[
         styles.item,

@@ -2,12 +2,21 @@ import React, { useState } from 'react';
 import { View, StyleSheet, FlatList } from 'react-native';
 import { FAB, Text, ActivityIndicator, Divider } from 'react-native-paper';
 import { useTasks } from '../contexts/TasksContext';
+import { Task } from '../types';
 import TaskItem from '../components/TaskItem';
 import AddTaskModal from '../components/AddTaskModal';
+import EditTaskModal from '../components/EditTaskModal';
 
 export default function TasksScreen() {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const { tasks, loading, toggleTask, deleteTask } = useTasks();
+
+  const handleEditTask = (task: Task) => {
+    setSelectedTask(task);
+    setEditModalVisible(true);
+  };
 
   if (loading) {
     return (
@@ -34,6 +43,7 @@ export default function TasksScreen() {
               task={item}
               onToggle={() => toggleTask(item.id)}
               onDelete={() => deleteTask(item.id)}
+              onEdit={() => handleEditTask(item)}
             />
           )}
           ItemSeparatorComponent={() => <Divider />}
@@ -43,12 +53,21 @@ export default function TasksScreen() {
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => setModalVisible(true)}
+        onPress={() => setAddModalVisible(true)}
       />
 
       <AddTaskModal
-        visible={modalVisible}
-        onDismiss={() => setModalVisible(false)}
+        visible={addModalVisible}
+        onDismiss={() => setAddModalVisible(false)}
+      />
+
+      <EditTaskModal
+        visible={editModalVisible}
+        task={selectedTask}
+        onDismiss={() => {
+          setEditModalVisible(false);
+          setSelectedTask(null);
+        }}
       />
     </View>
   );
