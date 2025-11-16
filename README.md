@@ -1,6 +1,11 @@
 # Behavioral Todo App
 
+**Status**: Phase 1 Foundation - 85% Complete ✅
+**Last Updated**: 2025-11-16
+
 A mobile todo app based on behavioral science principles (BJ Fogg's Behavior Model) designed to improve productivity through habit formation, adaptive difficulty, and psychological triggers.
+
+> 📋 **See [HANDOFF.md](./HANDOFF.md) for detailed development status and next steps**
 
 ## About This Project
 
