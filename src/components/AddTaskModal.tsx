@@ -30,8 +30,6 @@ export default function AddTaskModal({ visible, onDismiss }: AddTaskModalProps) 
         description: description.trim() || undefined,
         goalId: selectedGoalId,
         completed: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       });
       setTitle('');
       setDescription('');

@@ -22,8 +22,6 @@ export default function AddGoalModal({ visible, onDismiss }: AddGoalModalProps) 
       await createGoal({
         title: title.trim(),
         description: description.trim() || undefined,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       });
       setTitle('');
       setDescription('');
