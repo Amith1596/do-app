@@ -4,6 +4,7 @@ import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { lightTheme } from './src/theme';
 import { AuthProvider } from './src/contexts/AuthContext';
+import { TasksProvider } from './src/contexts/TasksContext';
 import AppNavigator from './src/navigation/AppNavigator';
 
 export default function App() {
@@ -11,8 +12,10 @@ export default function App() {
     <SafeAreaProvider>
       <PaperProvider theme={lightTheme}>
         <AuthProvider>
-          <AppNavigator />
-          <StatusBar style="auto" />
+          <TasksProvider>
+            <AppNavigator />
+            <StatusBar style="auto" />
+          </TasksProvider>
         </AuthProvider>
       </PaperProvider>
     </SafeAreaProvider>
