@@ -10,6 +10,7 @@ export default function SignUpScreen({ navigation }: any) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
   const { signUp } = useAuth();
 
   const handleSignUp = async () => {
@@ -30,11 +31,16 @@ export default function SignUpScreen({ navigation }: any) {
 
     setLoading(true);
     setError('');
+    setShowEmailConfirmation(false);
 
     try {
       await signUp(email, password, name);
+      // If signUp succeeds without error, show email confirmation message
+      // (User will be auto-navigated to app if session exists, handled by AuthContext)
+      setShowEmailConfirmation(true);
     } catch (err: any) {
       setError(err.message || 'Failed to sign up');
+      setShowEmailConfirmation(false);
     } finally {
       setLoading(false);
     }
@@ -95,6 +101,26 @@ export default function SignUpScreen({ navigation }: any) {
           </HelperText>
         ) : null}
 
+        {showEmailConfirmation ? (
+          <View style={styles.successBox}>
+            <Text variant="titleMedium" style={styles.successTitle}>
+              ✅ Account Created!
+            </Text>
+            <Text variant="bodyMedium" style={styles.successMessage}>
+              Please check your email at{' '}
+              <Text style={styles.emailText}>{email}</Text> to confirm your
+              account and complete the signup process.
+            </Text>
+            <Button
+              mode="outlined"
+              onPress={() => navigation.navigate('Login')}
+              style={styles.backButton}
+            >
+              Back to Login
+            </Button>
+          </View>
+        ) : null}
+
         <Button
           mode="contained"
           onPress={handleSignUp}
@@ -141,5 +167,30 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 8,
     marginBottom: 16,
+  },
+  successBox: {
+    backgroundColor: '#e8f5e9',
+    padding: 16,
+    borderRadius: 8,
+    marginVertical: 16,
+    borderWidth: 1,
+    borderColor: '#4caf50',
+  },
+  successTitle: {
+    color: '#2e7d32',
+    marginBottom: 8,
+    fontWeight: 'bold',
+  },
+  successMessage: {
+    color: '#1b5e20',
+    marginBottom: 12,
+    lineHeight: 20,
+  },
+  emailText: {
+    fontWeight: 'bold',
+    color: '#1b5e20',
+  },
+  backButton: {
+    marginTop: 8,
   },
 });

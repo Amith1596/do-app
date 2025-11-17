@@ -14,17 +14,21 @@ export const tasksService = {
   },
 
   async createTask(task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>, userId: string): Promise<Task> {
+    // Map camelCase to snake_case for database
+    const insertData = {
+      title: task.title,
+      description: task.description || null,
+      completed: task.completed || false,
+      user_id: userId,
+      goal_id: task.goalId || null,
+      due_date: task.dueDate || null,
+      estimated_minutes: task.estimatedMinutes || null,
+      priority: task.priority || null,
+    };
+
     const { data, error } = await supabase
       .from('tasks')
-      .insert([
-        {
-          ...task,
-          user_id: userId,
-          goal_id: task.goalId || null,
-          due_date: task.dueDate || null,
-          estimated_minutes: task.estimatedMinutes || null,
-        },
-      ])
+      .insert([insertData])
       .select()
       .single();
 

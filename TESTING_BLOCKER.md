@@ -40,4 +40,22 @@ Expo 54 introduced a new "winter" module system (part of Expo Router) that confl
 - babel-preset-expo
 
 ## Status
-**BLOCKED** - Proceeding with feature development, will add tests later
+**✅ RESOLVED** - 2025-11-16
+
+## Solution
+The issue was **Jest version mismatch**. Expo SDK 54 requires Jest 29.x, NOT Jest 30.x.
+
+**Fix Applied**:
+```bash
+npm install --save-dev jest@29.7.0 jest-expo@~54.0.12
+npm test -- --clearCache
+```
+
+**Result**:
+- ✅ All tests passing
+- ✅ React Native Testing Library working
+- ✅ Full TDD capability restored
+
+**Key Learning**: Always match Jest version to Expo's recommendations. The Expo upgrade guide explicitly states to use Jest ~29.7.x with SDK 54, but the project was using Jest 30.x.
+
+**Credit**: Solution from Expo upgrade guide and community research

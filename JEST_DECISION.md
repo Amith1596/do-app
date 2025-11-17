@@ -1,7 +1,8 @@
-# Jest Testing - Final Decision
+# Jest Testing - Resolution
 
 **Date**: 2025-11-16
-**Decision**: Leave tests blocked, document thoroughly
+**Original Decision**: Leave tests blocked, document thoroughly
+**Update**: ✅ RESOLVED - Jest now working with simple version fix
 
 ---
 
@@ -166,4 +167,25 @@ Rationale:
 
 ---
 
-**Decision**: Tests are nice-to-have, not must-have for MVP. Ship it.
+**Original Decision**: Tests are nice-to-have, not must-have for MVP. Ship it.
+
+---
+
+## ✅ RESOLUTION (Same Day - 2025-11-16)
+
+**The Fix**:
+```bash
+npm install --save-dev jest@29.7.0 jest-expo@~54.0.12
+npm test -- --clearCache
+```
+
+**Root Cause**: Project had Jest 30.x, but Expo SDK 54 requires Jest 29.x. This was documented in Expo's upgrade guide but missed during initial setup.
+
+**Result**:
+- Full Jest + React Native Testing Library working
+- TDD workflow now possible
+- All 4 test suites passing
+
+**Lesson**: User-driven research > AI assumptions. User found the solution in Expo docs after being given proper technical context.
+
+**Status**: Ready for TDD development ✅

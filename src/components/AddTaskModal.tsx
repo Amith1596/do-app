@@ -37,6 +37,7 @@ export default function AddTaskModal({ visible, onDismiss }: AddTaskModalProps) 
       onDismiss();
     } catch (error) {
       console.error('Error creating task:', error);
+      // TODO: Show error message to user with Snackbar/Toast
     } finally {
       setLoading(false);
     }
