@@ -35,7 +35,7 @@ export default function GoalItem({
             ]}
           />
           <View style={styles.titleArea}>
-            <Text variant="titleMedium" style={styles.title}>
+            <Text variant="titleMedium" style={styles.title} numberOfLines={2}>
               {goal.title}
             </Text>
             {goal.description ? (
