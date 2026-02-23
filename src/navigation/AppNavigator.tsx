@@ -8,6 +8,7 @@ import { View, StyleSheet } from 'react-native';
 
 import { useAuth } from '../contexts/AuthContext';
 import { palette, fonts } from '../theme';
+import WelcomeModal from '../components/WelcomeModal';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import FocusScreen from '../screens/FocusScreen';
@@ -105,7 +106,7 @@ function MainTabs() {
 }
 
 export default function AppNavigator() {
-  const { session, loading } = useAuth();
+  const { session, loading, showWelcome, dismissWelcome } = useAuth();
 
   if (loading) {
     return (
@@ -117,7 +118,18 @@ export default function AppNavigator() {
 
   return (
     <NavigationContainer>
-      {session ? <MainTabs /> : <AuthStack />}
+      {session ? (
+        <>
+          <MainTabs />
+          <WelcomeModal
+            visible={showWelcome}
+            onDismiss={dismissWelcome}
+            userName={session.user?.user_metadata?.name}
+          />
+        </>
+      ) : (
+        <AuthStack />
+      )}
     </NavigationContainer>
   );
 }

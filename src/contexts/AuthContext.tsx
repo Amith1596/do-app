@@ -7,9 +7,12 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isGuest: boolean;
+  showWelcome: boolean;
+  dismissWelcome: () => void;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, name?: string) => Promise<void>;
   signInAsGuest: () => Promise<void>;
+  convertGuest: (email: string, password: string, name?: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -19,6 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isGuest, setIsGuest] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
     // Check for existing session
@@ -46,9 +50,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUp = async (email: string, password: string, name?: string) => {
-    const { session } = await authService.signUp({ email, password, name });
-    setSession(session);
+    const { session: newSession } = await authService.signUp({ email, password, name });
+    if (newSession?.user?.id) {
+      await seedOnboardingData(newSession.user.id);
+    }
+    setSession(newSession);
     setIsGuest(false);
+    setShowWelcome(true);
   };
 
   const signInAsGuest = async () => {
@@ -60,6 +68,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsGuest(true);
   };
 
+  const convertGuest = async (email: string, password: string, name?: string) => {
+    await authService.linkEmailToGuest(email, password, name);
+    setIsGuest(false);
+  };
+
+  const dismissWelcome = () => setShowWelcome(false);
+
   const signOut = async () => {
     await authService.signOut();
     setSession(null);
@@ -67,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ session, loading, isGuest, signIn, signUp, signInAsGuest, signOut }}>
+    <AuthContext.Provider value={{ session, loading, isGuest, showWelcome, dismissWelcome, signIn, signUp, signInAsGuest, convertGuest, signOut }}>
       {children}
     </AuthContext.Provider>
   );

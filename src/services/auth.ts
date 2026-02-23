@@ -36,6 +36,16 @@ export const authService = {
     return data;
   },
 
+  async linkEmailToGuest(email: string, password: string, name?: string) {
+    const { data, error } = await supabase.auth.updateUser({
+      email,
+      password,
+      data: { name },
+    });
+    if (error) throw error;
+    return data;
+  },
+
   async signOut() {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
