@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
-import { Checkbox, IconButton, Text, Surface } from 'react-native-paper';
+import { View, StyleSheet, Pressable, Animated } from 'react-native';
+import { Checkbox, IconButton, Text } from 'react-native-paper';
 import { Task } from '../types';
-import { palette, fonts } from '../theme';
+import { palette, fonts, shadows } from '../theme';
+import { usePressAnimation } from '../utils/animations';
 
 interface TaskItemProps {
   task: Task;
@@ -26,6 +27,8 @@ export default function TaskItem({
   onEdit,
   hasSubTasks,
 }: TaskItemProps) {
+  const { scale, onPressIn, onPressOut } = usePressAnimation();
+
   const badges: React.ReactNode[] = [];
 
   if (task.difficulty) {
@@ -60,8 +63,14 @@ export default function TaskItem({
   }
 
   return (
-    <Pressable onPress={onEdit}>
-      <Surface style={[styles.card, task.completed && styles.cardCompleted]} elevation={0}>
+    <Pressable onPress={onEdit} onPressIn={onPressIn} onPressOut={onPressOut}>
+      <Animated.View
+        style={[
+          styles.card,
+          task.completed && styles.cardCompleted,
+          { transform: [{ scale }] },
+        ]}
+      >
         <View style={styles.row}>
           <Checkbox
             status={task.completed ? 'checked' : 'unchecked'}
@@ -93,7 +102,7 @@ export default function TaskItem({
             />
           </View>
         </View>
-      </Surface>
+      </Animated.View>
     </Pressable>
   );
 }
@@ -105,8 +114,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: palette.warmWhite,
     padding: 4,
-    borderWidth: 1,
-    borderColor: palette.border,
+    ...shadows.soft,
   },
   cardCompleted: {
     opacity: 0.55,

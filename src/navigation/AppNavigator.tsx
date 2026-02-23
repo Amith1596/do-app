@@ -7,7 +7,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, StyleSheet } from 'react-native';
 
 import { useAuth } from '../contexts/AuthContext';
-import { palette, fonts } from '../theme';
+import { palette, fonts, shadows } from '../theme';
 import WelcomeModal from '../components/WelcomeModal';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
@@ -36,10 +36,11 @@ function MainTabs() {
         tabBarInactiveTintColor: palette.inkFaint,
         tabBarStyle: {
           backgroundColor: palette.warmWhite,
-          borderTopColor: palette.border,
-          borderTopWidth: 1,
+          borderTopWidth: 0,
           paddingTop: 6,
           height: 60,
+          ...shadows.medium,
+          shadowOffset: { width: 0, height: -2 },
         },
         tabBarLabelStyle: {
           fontSize: 11,

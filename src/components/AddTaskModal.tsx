@@ -13,7 +13,7 @@ import {
 import { useTasks } from '../contexts/TasksContext';
 import { useGoals } from '../contexts/GoalsContext';
 import { Task } from '../types';
-import { palette, fonts } from '../theme';
+import { palette, fonts, shadows } from '../theme';
 
 interface AddTaskModalProps {
   visible: boolean;
@@ -443,11 +443,12 @@ function SubTaskCreatorInline({
 
 const styles = StyleSheet.create({
   modal: {
-    backgroundColor: palette.cream,
+    backgroundColor: palette.warmWhite,
     padding: 24,
     margin: 20,
     borderRadius: 24,
     maxHeight: '85%',
+    ...shadows.lifted,
   },
   heading: {
     marginBottom: 16,

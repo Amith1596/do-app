@@ -1,6 +1,8 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useCallback, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
+import { StyleSheet, Animated } from 'react-native';
+import { View } from 'react-native';
 import { Text, FAB, Snackbar, Button } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 import { useTasks } from '../contexts/TasksContext';
 import { useGoals } from '../contexts/GoalsContext';
 import { EnergyState, TaskRecommendation, TimerSession } from '../types';
@@ -13,6 +15,20 @@ import MomentumMeter from '../components/MomentumMeter';
 import TimerView from '../components/TimerView';
 import AddTaskModal from '../components/AddTaskModal';
 
+const ENERGY_BACKGROUNDS: Record<string, string> = {
+  none: palette.cream,
+  low: palette.energyScreenLow,
+  steady: palette.energyScreenSteady,
+  wired: palette.energyScreenWired,
+};
+
+function energyToIndex(energy: EnergyState | null): number {
+  if (!energy) return 0;
+  if (energy === 'low') return 1;
+  if (energy === 'steady') return 2;
+  return 3; // wired
+}
+
 export default function FocusScreen() {
   const [energy, setEnergy] = useState<EnergyState | null>(null);
   const [skippedIds, setSkippedIds] = useState<string[]>([]);
@@ -22,8 +38,42 @@ export default function FocusScreen() {
   const [timeComparison, setTimeComparison] = useState<string | null>(null);
   const [addModalVisible, setAddModalVisible] = useState(false);
 
+  const navigation = useNavigation();
   const { tasks, toggleTask, updateTask, celebrationMessage, clearCelebration } = useTasks();
   const { goals } = useGoals();
+
+  // --- Animated background ---
+  const bgAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(bgAnim, {
+      toValue: energyToIndex(energy),
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
+  }, [energy, bgAnim]);
+
+  const animatedBg = bgAnim.interpolate({
+    inputRange: [0, 1, 2, 3],
+    outputRange: [
+      palette.cream,
+      palette.energyScreenLow,
+      palette.energyScreenSteady,
+      palette.energyScreenWired,
+    ],
+  });
+
+  // Sync header background with energy state
+  useLayoutEffect(() => {
+    const bgColor = energy ? ENERGY_BACKGROUNDS[energy] : palette.cream;
+    navigation.setOptions({
+      headerStyle: {
+        backgroundColor: bgColor,
+        shadowColor: 'transparent',
+        elevation: 0,
+      },
+    });
+  }, [energy, navigation]);
 
   const momentum = useMemo(() => calculateMomentum(tasks), [tasks]);
 
@@ -111,111 +161,101 @@ export default function FocusScreen() {
     setSkipCount(0);
   }, []);
 
-  // --- Timer view ---
-  if (timerSession) {
-    return (
-      <View style={styles.container}>
+  // --- Focus view content ---
+  const allDone = tasks.filter((t) => !t.completed).length === 0;
+  const noTasks = tasks.length === 0;
+
+  return (
+    <Animated.View style={[styles.container, { backgroundColor: animatedBg }]}>
+      {timerSession ? (
         <TimerView
           session={timerSession}
           onDone={handleTimerDone}
           onAbandon={handleTimerAbandon}
         />
-      </View>
-    );
-  }
-
-  // --- Energy selector ---
-  if (!energy) {
-    return (
-      <View style={styles.container}>
+      ) : !energy ? (
         <EnergySelector onSelect={handleEnergySelect} />
-      </View>
-    );
-  }
+      ) : (
+        <>
+          {/* Momentum meter */}
+          <MomentumMeter momentum={momentum} />
 
-  // --- Focus view ---
-  const allDone = tasks.filter((t) => !t.completed).length === 0;
-  const noTasks = tasks.length === 0;
-
-  return (
-    <View style={styles.container}>
-      {/* Momentum meter */}
-      <MomentumMeter momentum={momentum} />
-
-      {/* Energy indicator + change button */}
-      <View style={styles.energyRow}>
-        <Text variant="bodySmall" style={styles.energyLabel}>
-          Energy: {energy === 'low' ? 'Low' : energy === 'steady' ? 'Steady' : 'Wired'}
-        </Text>
-        <Button
-          mode="text"
-          onPress={handleChangeEnergy}
-          compact
-          labelStyle={styles.changeEnergyLabel}
-        >
-          Change
-        </Button>
-      </View>
-
-      {/* Main content area */}
-      <View style={styles.focusArea}>
-        {noTasks ? (
-          <View style={styles.emptyState}>
-            <Text variant="titleLarge" style={styles.emptyTitle}>
-              A clean slate
-            </Text>
-            <Text variant="bodyMedium" style={styles.emptySubtitle}>
-              Tap + to add your first task
-            </Text>
-          </View>
-        ) : allDone ? (
-          <View style={styles.emptyState}>
-            <Text variant="titleLarge" style={styles.emptyTitle}>
-              Nothing right now
-            </Text>
-            <Text variant="bodyMedium" style={styles.emptySubtitle}>
-              Enjoy the quiet. You've earned it.
-            </Text>
-          </View>
-        ) : recommendation ? (
-          <>
-            <FocusCard
-              recommendation={recommendation}
-              goalName={recommendedGoalName}
-              onDoIt={handleDoIt}
-              onNotThis={handleNotThis}
-            />
-            {skipCount >= 3 && (
-              <Text variant="bodySmall" style={styles.skipHint}>
-                Having trouble picking? Try changing your energy level.
-              </Text>
-            )}
-          </>
-        ) : (
-          <View style={styles.emptyState}>
-            <Text variant="titleLarge" style={styles.emptyTitle}>
-              Nothing matches right now
-            </Text>
-            <Text variant="bodyMedium" style={styles.emptySubtitle}>
-              Try a different energy level, or add time estimates to your tasks.
+          {/* Energy indicator + change button */}
+          <View style={styles.energyRow}>
+            <Text variant="bodySmall" style={styles.energyLabel}>
+              Energy: {energy === 'low' ? 'Low' : energy === 'steady' ? 'Steady' : 'Wired'}
             </Text>
             <Button
-              mode="outlined"
+              mode="text"
               onPress={handleChangeEnergy}
-              style={styles.changeButton}
-              textColor={palette.sage}
+              compact
+              labelStyle={styles.changeEnergyLabel}
             >
-              Change energy
+              Change
             </Button>
           </View>
-        )}
-      </View>
 
-      {/* Today's count */}
-      {todayCount > 0 && (
-        <Text variant="bodySmall" style={styles.todayCount}>
-          {todayCount} task{todayCount !== 1 ? 's' : ''} done today
-        </Text>
+          {/* Main content area */}
+          <View style={styles.focusArea}>
+            {noTasks ? (
+              <View style={styles.emptyState}>
+                <Text variant="titleLarge" style={styles.emptyTitle}>
+                  A clean slate
+                </Text>
+                <Text variant="bodyMedium" style={styles.emptySubtitle}>
+                  Tap + to add your first task
+                </Text>
+              </View>
+            ) : allDone ? (
+              <View style={styles.emptyState}>
+                <Text variant="titleLarge" style={styles.emptyTitle}>
+                  Nothing right now
+                </Text>
+                <Text variant="bodyMedium" style={styles.emptySubtitle}>
+                  Enjoy the quiet. You've earned it.
+                </Text>
+              </View>
+            ) : recommendation ? (
+              <>
+                <FocusCard
+                  recommendation={recommendation}
+                  goalName={recommendedGoalName}
+                  onDoIt={handleDoIt}
+                  onNotThis={handleNotThis}
+                />
+                {skipCount >= 3 && (
+                  <Text variant="bodySmall" style={styles.skipHint}>
+                    Having trouble picking? Try changing your energy level.
+                  </Text>
+                )}
+              </>
+            ) : (
+              <View style={styles.emptyState}>
+                <Text variant="titleLarge" style={styles.emptyTitle}>
+                  Nothing matches right now
+                </Text>
+                <Text variant="bodyMedium" style={styles.emptySubtitle}>
+                  Try a different energy level, or add time estimates to your tasks.
+                </Text>
+                <Button
+                  mode="outlined"
+                  onPress={handleChangeEnergy}
+                  style={styles.changeButton}
+                  textColor={palette.sage}
+                >
+                  Change energy
+                </Button>
+              </View>
+            )}
+          </View>
+
+          {/* Today's count */}
+          {todayCount > 0 && (
+            <Text variant="bodySmall" style={styles.todayCount}>
+              {todayCount} task{todayCount !== 1 ? 's' : ''} done today
+            </Text>
+          )}
+        </>
       )}
 
       {/* Quick add FAB */}
@@ -251,14 +291,13 @@ export default function FocusScreen() {
       >
         {timeComparison || ''}
       </Snackbar>
-    </View>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: palette.cream,
   },
   energyRow: {
     flexDirection: 'row',

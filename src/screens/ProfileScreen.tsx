@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Platform } from 'react-native';
 import { Text, Button, Surface, TextInput, HelperText } from 'react-native-paper';
 import { useAuth } from '../contexts/AuthContext';
-import { palette, fonts } from '../theme';
+import { palette, fonts, shadows } from '../theme';
 import PWAInstallModal from '../components/PWAInstallModal';
 
 export default function ProfileScreen() {
@@ -236,8 +236,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 32,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: palette.border,
+    ...shadows.medium,
   },
   avatarCircle: {
     width: 72,

@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
-import { Text, IconButton, Surface } from 'react-native-paper';
+import { View, StyleSheet, Pressable, Animated } from 'react-native';
+import { Text, IconButton } from 'react-native-paper';
 import { Goal } from '../types';
-import { palette, fonts } from '../theme';
+import { palette, fonts, shadows } from '../theme';
+import { usePressAnimation } from '../utils/animations';
 import GoalProgressBar from './GoalProgressBar';
 
 interface GoalItemProps {
@@ -21,9 +22,11 @@ export default function GoalItem({
   onDelete,
   onEdit,
 }: GoalItemProps) {
+  const { scale, onPressIn, onPressOut } = usePressAnimation();
+
   return (
-    <Pressable onPress={onEdit}>
-      <Surface style={styles.card} elevation={0}>
+    <Pressable onPress={onEdit} onPressIn={onPressIn} onPressOut={onPressOut}>
+      <Animated.View style={[styles.card, { transform: [{ scale }] }]}>
         <View style={styles.header}>
           <View
             style={[
@@ -51,7 +54,7 @@ export default function GoalItem({
         <View style={styles.progressArea}>
           <GoalProgressBar completed={completedCount} total={taskCount} />
         </View>
-      </Surface>
+      </Animated.View>
     </Pressable>
   );
 }
@@ -63,8 +66,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: palette.warmWhite,
     padding: 16,
-    borderWidth: 1,
-    borderColor: palette.border,
+    ...shadows.soft,
   },
   header: {
     flexDirection: 'row',
