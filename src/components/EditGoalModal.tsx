@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { Portal, Modal, TextInput, Button, Text } from 'react-native-paper';
 import { useGoals } from '../contexts/GoalsContext';
 import { Goal } from '../types';
+import { palette, fonts } from '../theme';
 
 interface EditGoalModalProps {
   visible: boolean;
@@ -49,36 +50,38 @@ export default function EditGoalModal({ visible, goal, onDismiss }: EditGoalModa
         onDismiss={onDismiss}
         contentContainerStyle={styles.modal}
       >
-        <ScrollView>
-          <Text variant="headlineSmall" style={styles.title}>
-            Edit Goal
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text variant="titleLarge" style={styles.title}>
+            Edit goal
           </Text>
 
           <TextInput
-            label="Goal Title"
+            label="Goal title"
             value={title}
             onChangeText={setTitle}
             mode="outlined"
             style={styles.input}
+            outlineStyle={styles.inputOutline}
             autoFocus
           />
 
           <TextInput
-            label="Description (Optional)"
+            label="Description (optional)"
             value={description}
             onChangeText={setDescription}
             mode="outlined"
             multiline
             numberOfLines={3}
             style={styles.input}
+            outlineStyle={styles.inputOutline}
           />
 
           <View style={styles.buttons}>
             <Button
-              mode="outlined"
+              mode="text"
               onPress={onDismiss}
               disabled={loading}
-              style={styles.button}
+              textColor={palette.inkLight}
             >
               Cancel
             </Button>
@@ -87,7 +90,7 @@ export default function EditGoalModal({ visible, goal, onDismiss }: EditGoalModa
               onPress={handleSubmit}
               loading={loading}
               disabled={loading || !title.trim()}
-              style={styles.button}
+              style={styles.saveButton}
             >
               Save
             </Button>
@@ -100,23 +103,30 @@ export default function EditGoalModal({ visible, goal, onDismiss }: EditGoalModa
 
 const styles = StyleSheet.create({
   modal: {
-    backgroundColor: 'white',
+    backgroundColor: palette.cream,
     padding: 24,
     margin: 20,
-    borderRadius: 8,
+    borderRadius: 24,
   },
   title: {
     marginBottom: 16,
+    color: palette.inkDark,
+    fontFamily: fonts.bold,
+    letterSpacing: -0.3,
   },
   input: {
     marginBottom: 16,
+    backgroundColor: 'transparent',
+  },
+  inputOutline: {
+    borderRadius: 12,
   },
   buttons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     gap: 8,
   },
-  button: {
-    flex: 1,
+  saveButton: {
+    borderRadius: 20,
   },
 });

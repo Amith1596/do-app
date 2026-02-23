@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "behavioral-todo-app",
-    "slug": "behavioral-todo-app",
+    "name": "DO",
+    "slug": "do-app",
+    "scheme": "do-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,7 +25,12 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
+      "bundler": "metro",
+      "output": "single",
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

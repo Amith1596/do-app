@@ -30,6 +30,12 @@ export const authService = {
     return data;
   },
 
+  async signInAnonymously() {
+    const { data, error } = await supabase.auth.signInAnonymously();
+    if (error) throw error;
+    return data;
+  },
+
   async signOut() {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;

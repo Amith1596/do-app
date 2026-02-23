@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import { Text, TextInput, Button, HelperText } from 'react-native-paper';
+import { Text, TextInput, Button, HelperText, useTheme } from 'react-native-paper';
 import { useAuth } from '../contexts/AuthContext';
+import { palette, fonts } from '../theme';
 
 export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [guestLoading, setGuestLoading] = useState(false);
   const [error, setError] = useState('');
-  const { signIn } = useAuth();
+  const { signIn, signInAsGuest } = useAuth();
+  const theme = useTheme();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -28,19 +31,60 @@ export default function LoginScreen({ navigation }: any) {
     }
   };
 
+  const handleGuest = async () => {
+    setGuestLoading(true);
+    setError('');
+    try {
+      await signInAsGuest();
+    } catch (err: any) {
+      setError(err.message || 'Failed to continue as guest');
+    } finally {
+      setGuestLoading(false);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={styles.content}>
-        <Text variant="headlineLarge" style={styles.title}>
-          Welcome Back
-        </Text>
-        <Text variant="bodyMedium" style={styles.subtitle}>
-          Sign in to continue
+        {/* Branding */}
+        <View style={styles.brandSection}>
+          <Text variant="displaySmall" style={[styles.appName, { color: palette.inkDark }]}>
+            <Text style={styles.appNameStrike}>TO</Text>
+            {' '}DO
+          </Text>
+          <Text variant="bodyLarge" style={[styles.tagline, { color: palette.inkLight }]}>
+            Don't organize tasks. Finish them.
+          </Text>
+        </View>
+
+        {/* Guest CTA — primary action */}
+        <Button
+          mode="contained"
+          onPress={handleGuest}
+          loading={guestLoading}
+          disabled={guestLoading || loading}
+          style={styles.guestButton}
+          contentStyle={styles.guestButtonContent}
+          labelStyle={styles.guestButtonLabel}
+        >
+          Try the Experience
+        </Button>
+        <Text variant="bodySmall" style={[styles.guestSubtitle, { color: palette.inkFaint }]}>
+          No account needed
         </Text>
 
+        <View style={styles.dividerRow}>
+          <View style={[styles.dividerLine, { backgroundColor: palette.sandDark }]} />
+          <Text variant="bodySmall" style={[styles.dividerText, { color: palette.inkFaint }]}>
+            or sign in
+          </Text>
+          <View style={[styles.dividerLine, { backgroundColor: palette.sandDark }]} />
+        </View>
+
+        {/* Sign in form */}
         <TextInput
           label="Email"
           value={email}
@@ -49,6 +93,7 @@ export default function LoginScreen({ navigation }: any) {
           keyboardType="email-address"
           style={styles.input}
           mode="outlined"
+          outlineStyle={styles.inputOutline}
         />
 
         <TextInput
@@ -58,6 +103,7 @@ export default function LoginScreen({ navigation }: any) {
           secureTextEntry
           style={styles.input}
           mode="outlined"
+          outlineStyle={styles.inputOutline}
         />
 
         {error ? (
@@ -67,11 +113,12 @@ export default function LoginScreen({ navigation }: any) {
         ) : null}
 
         <Button
-          mode="contained"
+          mode="contained-tonal"
           onPress={handleLogin}
           loading={loading}
-          disabled={loading}
-          style={styles.button}
+          disabled={loading || guestLoading}
+          style={styles.signInButton}
+          contentStyle={styles.signInButtonContent}
         >
           Sign In
         </Button>
@@ -79,9 +126,10 @@ export default function LoginScreen({ navigation }: any) {
         <Button
           mode="text"
           onPress={() => navigation.navigate('SignUp')}
-          disabled={loading}
+          disabled={loading || guestLoading}
+          labelStyle={{ color: palette.sage }}
         >
-          Don't have an account? Sign Up
+          Create an account
         </Button>
       </View>
     </KeyboardAvoidingView>
@@ -94,23 +142,69 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 24,
+    padding: 32,
     justifyContent: 'center',
   },
-  title: {
-    marginBottom: 8,
-    textAlign: 'center',
+  brandSection: {
+    alignItems: 'center',
+    marginBottom: 40,
   },
-  subtitle: {
-    marginBottom: 32,
+  appName: {
+    fontFamily: fonts.bold,
+    fontSize: 56,
+    letterSpacing: 8,
+    marginBottom: 12,
+  },
+  appNameStrike: {
+    textDecorationLine: 'line-through' as const,
+    color: palette.inkLight,
+  },
+  tagline: {
     textAlign: 'center',
-    opacity: 0.7,
+    letterSpacing: 0.3,
+    fontFamily: fonts.regular,
+  },
+  guestButton: {
+    borderRadius: 28,
+    marginBottom: 8,
+  },
+  guestSubtitle: {
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  guestButtonContent: {
+    paddingVertical: 10,
+  },
+  guestButtonLabel: {
+    fontSize: 16,
+    fontFamily: fonts.medium,
+    letterSpacing: 0.5,
+  },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  dividerLine: {
+    flex: 1,
+    height: StyleSheet.hairlineWidth,
+  },
+  dividerText: {
+    marginHorizontal: 16,
   },
   input: {
-    marginBottom: 16,
+    marginBottom: 12,
+    backgroundColor: 'transparent',
   },
-  button: {
-    marginTop: 8,
-    marginBottom: 16,
+  inputOutline: {
+    borderRadius: 12,
+  },
+  signInButton: {
+    borderRadius: 28,
+    marginTop: 4,
+    marginBottom: 12,
+  },
+  signInButtonContent: {
+    paddingVertical: 6,
   },
 });

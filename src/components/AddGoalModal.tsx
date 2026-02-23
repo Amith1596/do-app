@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Portal, Modal, TextInput, Button, Text } from 'react-native-paper';
 import { useGoals } from '../contexts/GoalsContext';
+import { palette, fonts } from '../theme';
 
 interface AddGoalModalProps {
   visible: boolean;
@@ -40,36 +41,38 @@ export default function AddGoalModal({ visible, onDismiss }: AddGoalModalProps) 
         onDismiss={onDismiss}
         contentContainerStyle={styles.modal}
       >
-        <ScrollView>
-          <Text variant="headlineSmall" style={styles.title}>
-            New Goal
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text variant="titleLarge" style={styles.title}>
+            New goal
           </Text>
 
           <TextInput
-            label="Goal Title"
+            label="What's your goal?"
             value={title}
             onChangeText={setTitle}
             mode="outlined"
             style={styles.input}
+            outlineStyle={styles.inputOutline}
             autoFocus
           />
 
           <TextInput
-            label="Description (Optional)"
+            label="Why does it matter? (optional)"
             value={description}
             onChangeText={setDescription}
             mode="outlined"
             multiline
             numberOfLines={3}
             style={styles.input}
+            outlineStyle={styles.inputOutline}
           />
 
           <View style={styles.buttons}>
             <Button
-              mode="outlined"
+              mode="text"
               onPress={onDismiss}
               disabled={loading}
-              style={styles.button}
+              textColor={palette.inkLight}
             >
               Cancel
             </Button>
@@ -78,7 +81,7 @@ export default function AddGoalModal({ visible, onDismiss }: AddGoalModalProps) 
               onPress={handleSubmit}
               loading={loading}
               disabled={loading || !title.trim()}
-              style={styles.button}
+              style={styles.createButton}
             >
               Create
             </Button>
@@ -91,23 +94,30 @@ export default function AddGoalModal({ visible, onDismiss }: AddGoalModalProps) 
 
 const styles = StyleSheet.create({
   modal: {
-    backgroundColor: 'white',
+    backgroundColor: palette.cream,
     padding: 24,
     margin: 20,
-    borderRadius: 8,
+    borderRadius: 24,
   },
   title: {
     marginBottom: 16,
+    color: palette.inkDark,
+    fontFamily: fonts.bold,
+    letterSpacing: -0.3,
   },
   input: {
     marginBottom: 16,
+    backgroundColor: 'transparent',
+  },
+  inputOutline: {
+    borderRadius: 12,
   },
   buttons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     gap: 8,
   },
-  button: {
-    flex: 1,
+  createButton: {
+    borderRadius: 20,
   },
 });

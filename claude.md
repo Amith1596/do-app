@@ -1,407 +1,96 @@
-# Behavioral Todo App - Claude Code Context
+# DO — Claude Code Context
 
-**Project**: behavioral-todo-app
-**Type**: React Native + Expo mobile app
-**Status**: In Development (Phase 1)
+**Project**: DO (anti-list task app)
+**Type**: React Native + Expo mobile/web app
+**Status**: Phase 1.5 — Redesigned thesis, building
 **Started**: 2025-11-12
+**Last Updated**: 2026-02-22
 
 ---
 
-## Project Overview
+## Product Thesis
 
-A mobile todo app that applies behavioral science principles (BJ Fogg's Behavior Model) to improve productivity and habit formation. Built as both a learning project and portfolio piece.
+Every todo app shows you a list. Lists cause decision fatigue and overwhelm. DO hides the list and shows you **one task at a time**, matched to your current energy level. Built on BJ Fogg's Behavior Model and ADHD research.
 
-**Dual Purpose**:
-1. **Learning Goal**: Master Claude Code by building with TDD and advanced features
-2. **Portfolio Goal**: Create compelling PM interview case study showing product thinking + technical execution
+**Core principles**: Anti-list, energy-first, shame-free, momentum over streaks, time perception training.
 
 ---
 
-## Tech Stack & Rationale
+## Tech Stack
 
-### Frontend: React Native + Expo + TypeScript
-**Why**:
-- User needs true mobile app for iPhone (not just web)
-- React Native = one codebase for iOS/Android
-- Expo simplifies development (no Xcode needed for basic dev)
-- TypeScript = better for rusty coding skills (haven't coded in 1 year)
-- User understands React basics from portfolio work
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React Native + Expo 54 + TypeScript |
+| UI | React Native Paper (Material Design 3) |
+| Backend | Supabase (PostgreSQL + Auth + RLS) |
+| State | React Context (AuthContext, TasksContext, GoalsContext) |
+| Navigation | React Navigation (bottom tabs: Focus > Tasks > Goals > Profile) |
+| Haptics | expo-haptics |
 
-### Backend: Supabase (Free Tier)
-**Why**:
-- Zero cost requirement
-- PostgreSQL (user has SQL background as data engineer)
-- Built-in auth
-- Real-time capabilities for future features
-- Generous free tier (500MB, 50K users)
+---
 
-### AI Integration: OpenAI/Anthropic APIs
-**Why**:
-- Free tiers available for development
-- Needed for behavioral coaching features
-- Can add local models later if needed
+## Current State
 
-### Testing: Jest + React Native Testing Library
-**Why**:
-- TDD requirement from project brief
-- Standard for React Native
-- Good learning path for PM interviews
+### What's Built and Working
+
+**Foundation** (Phase 1):
+- Authentication (email/password, guest mode, session persistence)
+- Task CRUD with behavioral fields (difficulty, energy, time estimate, sub-tasks)
+- Goal CRUD with task linking and progress bars
+- Supabase integration with RLS policies
+
+**Behavioral Features** (Phase 1.5 redesign):
+1. **Focus Screen** — one-task-at-a-time, energy check, timer view, shame-free empty states
+2. **Energy Matching** — Low/Steady/Wired states filter and score tasks differently
+3. **Momentum Meter** — 7-day rolling bar with sparkline, never resets to zero
+4. **Timer + Time Training** — elapsed vs estimated comparison after completion
+5. **Completion Celebrations** — contextual snackbar + haptic, goal progress awareness
+6. **All Tasks** — traditional list view as secondary tab (not default)
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/screens/FocusScreen.tsx` | **Primary surface** — energy check, one-task card, timer |
+| `src/screens/TasksScreen.tsx` | Secondary list view with goal grouping |
+| `src/components/EnergySelector.tsx` | "How's your energy?" UI |
+| `src/components/FocusCard.tsx` | Single task recommendation card |
+| `src/components/TimerView.tsx` | Active task timer with time training |
+| `src/components/MomentumMeter.tsx` | Momentum bar + sparkline |
+| `src/utils/recommendations.ts` | Energy-aware scoring algorithm |
+| `src/utils/momentum.ts` | Momentum calculation from task history |
+| `src/utils/celebrations.ts` | Celebration messages + haptics |
+| `src/types/index.ts` | Task, Goal, EnergyState, MomentumData, TimerSession |
+| `src/navigation/AppNavigator.tsx` | Focus (home) > Tasks > Goals > Profile |
+
+### Database Schema
+
+**Deployed migrations:**
+- `001_initial_schema.sql` — profiles, goals, tasks, task_dependencies, RLS
+- `002_behavioral_fields.sql` — difficulty, parent_task_id, energy_level, started_at, completed_at, skip_count
+
+---
+
+## Phase 2: The Brain Dump (Planned)
+
+AI-powered task capture: free-text brain dump → AI extracts structured tasks → smart re-planning → intelligent decomposition → context memory across sessions.
+
+**Tech addition**: Anthropic Claude API. Full spec in `PRD.md`.
 
 ---
 
 ## Development Principles
 
-### 1. Test-Driven Development (TDD)
-**Always follow**:
-1. Write test first (red)
-2. Implement feature (green)
-3. Refactor (clean)
-4. Document decision in this file
-
-**Never**:
-- Write implementation before tests
-- Skip tests "just this once"
-- Commit untested code
-
-### 2. Documentation
-**Update after major decisions**:
-- This file (claude.md) for project decisions
-- `../neural-vault/04_CONTEXT/project_tracking/behavioral-todo-app.md` for learnings
-- README.md for user-facing changes
-- CHANGELOG.md when completing features
-
-### 3. Git Workflow
-**Commit strategy**:
-- Small, focused commits
-- Descriptive messages following: `type(scope): description`
-- Types: feat, fix, docs, refactor, test, chore
-- Always include test files in commits
-
-**Branching**:
-- `main` = stable, tested code
-- `feature/[name]` = new features
-- `fix/[name]` = bug fixes
-
-### 4. Code Quality
-- TypeScript strict mode enabled
-- ESLint + Prettier for consistency
-- No `any` types unless absolutely necessary
-- Clear component and function naming
+1. **TypeScript is the safety net** — zero type errors required
+2. **Shame-free language everywhere** — no "overdue", "failed", "missed"
+3. **Energy-first UX** — every task surface considers current energy state
+4. **Keep it simple** — working > polished
 
 ---
 
-## Architecture Decisions
+## Development History
 
-### Decision Log
-
-#### 2025-11-12: Initial Tech Stack
-**Context**: Need mobile app with AI, zero cost, rusty coding skills (1 year break)
-
-**Options Considered**:
-1. Next.js PWA - web app, mobile-like
-2. React Native + Expo - true mobile
-3. Flutter - new framework to learn
-
-**Decision**: React Native + Expo + Supabase
-
-**Rationale**:
-- User specifically wants "true mobile app" to use on iPhone
-- React basics already understood
-- Expo allows testing via Expo Go (no complex setup)
-- Supabase free tier covers all backend needs
-- TypeScript helps with skill rust
-- Can actually ship to TestFlight without App Store
-
-**Trade-offs**:
-- ✅ True native performance
-- ✅ One codebase, two platforms
-- ✅ Can install on iPhone immediately
-- ❌ More complex than web (but Expo helps)
-- ❌ React Native ecosystem can be tricky
-
----
-
-## Core Differentiators
-
-**What makes this app unique** (vs standard todo apps):
-
-1. **Smart Scheduling**: AI finds optimal calendar slots for tasks based on energy patterns
-2. **Contextual Intelligence**: "I have 15 mins" → AI recommends best task for RIGHT NOW
-3. **Goal Visibility**: Every task shows real-time impact on bigger goals (motivation boost)
-4. **Psychological Optimization**: Reminders reframed using behavioral science for max motivation
-5. **Failure Prevention**: AI predicts and warns about likely failures BEFORE they happen
-6. **Adaptive Modes**: Same tasks, different views based on mental state (Deep Work, Sprint, Habit modes)
-7. **Dependency Intelligence**: Surfaces "unblocking tasks" that enable the most downstream work
-
-**Detailed feature concepts**: See `docs/FEATURE_CONCEPTS.md` (15+ concepts documented)
-
----
-
-## Feature Implementation Plan
-
-### Phase 1: Foundation (Weeks 1-2)
-**Status**: In Progress
-
-**Goals**:
-- [x] Project setup with Expo
-- [x] Documentation created
-- [x] Feature concepts brainstormed (15+ unique concepts in FEATURE_CONCEPTS.md)
-- [ ] Supabase integration
-- [ ] User authentication
-- [ ] Basic task CRUD (Create, Read, Update, Delete)
-- [ ] **NEW**: Goal-task linking in database schema
-- [ ] **NEW**: "I Have X Minutes" recommendation engine (basic version)
-- [ ] **NEW**: Simple task dependency detection
-- [ ] First TDD cycle complete
-- [ ] Custom Claude Code command created
-
-**Why these additions**:
-- Goal-task linking enables Phase 2 progress visualization
-- "I Have X Minutes" is a core differentiator (high ROI early)
-- Dependency detection sets up Phase 2 intelligent scheduling
-
-**Claude Code Learning**: Basic TDD, git workflow, custom commands
-
----
-
-### Phase 2: Behavioral Features (Weeks 3-4)
-
-**Goals**:
-- [ ] Implementation Intentions (task creation flow)
-- [ ] Adaptive difficulty algorithm (based on user success rate)
-- [ ] Progress tracking with celebration triggers
-- [ ] Weekly reset with reflection prompts
-- [ ] Habit streak system
-- [ ] **NEW**: Smart Calendar Tetris (AI finds optimal task time slots)
-- [ ] **NEW**: Work Styles context switching (Deep Work, Sprint, Habit modes)
-- [ ] **NEW**: Micro-goal momentum milestones (break large goals into celebrations)
-- [ ] **NEW**: Energy-Task Matching (match cognitive load to current energy state)
-- [ ] **NEW**: Context-Locked Implementation Intentions (sensor-based anchor detection)
-
-**Why these additions**:
-- Smart Calendar Tetris differentiates from ALL other todo apps (unique feature)
-- Work Styles prevents overwhelm by contextual filtering
-- Micro-milestones maintain motivation through long projects
-- Energy matching increases completion rates (right task, right state)
-- Context-locking makes Implementation Intentions 2-3x more effective (research-backed)
-
-**Claude Code Learning**: Agents, complex state, worktrees
-
-**Behavioral Science Applied**:
-- **Fogg's B=MAP**: Behavior = Motivation × Ability × Prompt
-- **Implementation Intentions**: Specific "when-then" task structure (enhanced with sensors)
-- **Small Wins**: Celebrate micro-progress (milestone system)
-- **Fresh Start Effect**: Weekly resets + multiple daily temporal anchors
-- **Energy Management**: Match task difficulty to cognitive capacity
-
----
-
-### Phase 3: Advanced (Week 5+)
-
-**Goals**:
-- [ ] AI behavioral coaching (GPT-4/Claude integration)
-  - [ ] **Specific**: Psychological Reframing Engine (task reminders using dark psychology, loss aversion, identity framing)
-  - [ ] **Specific**: Predictive Failure Warnings (ML model predicts task failure before it happens)
-- [ ] Data visualization (progress charts)
-  - [ ] **Enhanced**: Goal progress with velocity tracking
-  - [ ] **Enhanced**: Dependency chain visualization
-- [ ] Social features (accountability partner)
-  - [ ] **Specific**: Social Goal Witnesses (progress updates without task visibility)
-  - [ ] **Specific**: Rotating Accountability Pods (3-4 people, weekly rotating judge)
-  - [ ] **Specific**: Commitment Contracts with stakes
-- [ ] Custom behavioral experiments
-  - [ ] **Enhanced**: A/B testing framework for celebration types
-  - [ ] **Enhanced**: Temporal manipulation (deadline compression, commitment ceremonies)
-- [ ] Export/analytics
-
-**Why these additions**:
-- Psychological Reframing = proven persuasion techniques (Cialdini, loss aversion)
-- Predictive Failures = prevents waste (catches problems early)
-- Social Witnesses = accountability without micromanagement
-- These are portfolio-worthy features showing PM + behavioral science depth
-
-**Claude Code Learning**: MCPs, complex integrations, deployment
-
----
-
-## Current Status & Next Steps
-
-### Completed
-- ✅ Project initialized with Expo
-- ✅ README.md with comprehensive docs
-- ✅ claude.md with project context
-- ✅ Git initialized
-- ✅ Basic project structure
-- ✅ Feature concept brainstorming (15+ concepts across behavioral science domains)
-- ✅ FEATURE_CONCEPTS.md created with detailed specifications
-
-### In Progress
-- 🔄 Setting up Supabase account and project
-- 🔄 Testing Expo Go on iPhone
-- 🔄 Database schema design (incorporating goal-task linking, dependencies)
-
-### Next Actions
-1. Test app loads on iPhone via Expo Go
-2. Set up Supabase project (free tier)
-3. Install Supabase client library
-4. Write first test for authentication
-5. Implement authentication feature
-6. Create first custom Claude Code command
-
----
-
-## Development Environment
-
-### User's Setup
-- **Device**: MacBook Air M1
-- **Phone**: iPhone 16
-- **Skills**: Ex-Microsoft data engineer (SQL expert, Python basics, React basics)
-- **Time**: Flexible/sporadic (MBA schedule)
-- **Last Coded**: 1 year ago
-
-### Considerations
-- Keep setup simple (rusty skills)
-- TypeScript helps with autocomplete
-- Good documentation critical
-- Quick feedback loops important
-- Must work asynchronously
-
----
-
-## Behavioral Science Reference
-
-### BJ Fogg's Behavior Model
-**B = MAP**
-- **Behavior** = Motivation × Ability × Prompt
-- All three must be present simultaneously
-
-**How we apply**:
-- **Motivation**: Celebration triggers, streaks, small wins
-- **Ability**: Adaptive difficulty, break down tasks
-- **Prompt**: Implementation intentions, timely notifications
-
-### Implementation Intentions
-**Format**: "When [situation X occurs], I will [perform behavior Y]"
-
-**Research**: Increases success rate by 2-3x
-
-**In app**: Task creation prompts for specific when/where/how
-
-### Tiny Habits Method
-**Formula**: Anchor + Tiny Behavior + Celebration
-
-**In app**:
-- Anchor: existing routines
-- Tiny: adaptively small tasks
-- Celebration: immediate positive feedback
-
----
-
-## Known Issues & Blockers
-
-None currently.
-
----
-
-## Testing Strategy
-
-### Unit Tests
-- Individual functions
-- React hooks
-- Utility functions
-- Behavioral algorithms
-
-### Component Tests
-- UI components in isolation
-- User interactions
-- State management
-
-### Integration Tests
-- Supabase connection
-- Authentication flow
-- API integrations
-
-### E2E Tests
-- Critical user flows
-- Weekly reset functionality
-- Data persistence
-
-**Coverage Goal**: 80%+ for core features
-
----
-
-## Performance Considerations
-
-### Mobile-First
-- Optimize bundle size
-- Lazy load screens
-- Efficient re-renders
-- Minimize API calls
-
-### Offline Support (Future)
-- Local-first approach
-- Sync when online
-- Conflict resolution
-
----
-
-## Portfolio Documentation
-
-As features complete, document for portfolio:
-- **Problem**: What behavioral science problem does this solve?
-- **Solution**: How did you implement it?
-- **Impact**: What's the expected behavior change?
-- **Learning**: What did you learn?
-
-Save in: `../neural-vault/04_CONTEXT/project_tracking/behavioral-todo-app.md`
-
----
-
-## Questions & Decisions Needed
-
-### Open Questions
-1. Which AI API to use? (OpenAI vs Anthropic vs local)
-2. Notification strategy? (Push vs in-app only)
-3. Data visualization library?
-4. Should we add social features in Phase 2 or 3?
-
-### To Decide
-- Color scheme and design system
-- Onboarding flow design
-- Privacy policy (since using AI APIs)
-
----
-
-## Resources & References
-
-**Expo Docs**: https://docs.expo.dev/
-**React Native**: https://reactnative.dev/
-**Supabase**: https://supabase.com/docs
-**BJ Fogg**: https://behaviormodel.org/
-**Implementation Intentions**: Gollwitzer & Sheeran (2006)
-**Tiny Habits**: https://tinyhabits.com/
-
----
-
-## Communication Preferences
-
-From `../neural-vault/claude.md`:
-- Consultative, present trade-offs
-- Technically sharp (strong background)
-- Ask clarifying questions
-- Avoid over-explaining repeated tasks
-- Flag when over-engineering
-
-**For this project**:
-- Explain first time doing something new
-- Keep explanations concise after that
-- Always validate before major refactors
-- Surface decisions with pros/cons
-
----
-
-**Last Updated**: 2025-11-12
-**Next Review**: After Phase 1 completion
+See `docs/DEVELOPMENT_LOG.md` for session-by-session history.
 
 ---
 
@@ -409,8 +98,8 @@ From `../neural-vault/claude.md`:
 
 | Date | Change | Reason |
 |------|--------|--------|
-| 2025-11-12 | Initial setup | Project creation |
-| 2025-11-12 | Tech stack selected | React Native + Expo + Supabase |
-| 2025-11-12 | Feature concepts brainstormed | Parallel agents explored 15+ unique features across behavioral science domains (Fogg, social psych, AI, temporal, environmental) |
-| 2025-11-12 | FEATURE_CONCEPTS.md created | Comprehensive documentation of all concepts with implementation priorities |
-| 2025-11-12 | Phase plans enhanced | Added specific features to each phase while preserving original goals |
+| 2025-11-12 | Initial setup | Project creation with Expo + Supabase |
+| 2025-11-16 | Foundation build | Auth, CRUD, navigation, UI framework |
+| 2026-02-22 | MVP behavioral features | "I Have X Minutes", celebrations, progress bars |
+| 2026-02-22 | Rebrand to "DO" | GitHub-ready packaging |
+| 2026-02-22 | **Thesis redesign** | Anti-list, energy-first, shame-free, momentum. New Focus screen, timer, energy selector. Competitive differentiation from Todoist/Things/Goblin.tools. |

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { Text, TextInput, Button, HelperText } from 'react-native-paper';
+import { Text, TextInput, Button, HelperText, useTheme } from 'react-native-paper';
 import { useAuth } from '../contexts/AuthContext';
+import { palette, fonts } from '../theme';
 
 export default function SignUpScreen({ navigation }: any) {
   const [name, setName] = useState('');
@@ -12,6 +13,7 @@ export default function SignUpScreen({ navigation }: any) {
   const [error, setError] = useState('');
   const [showEmailConfirmation, setShowEmailConfirmation] = useState(false);
   const { signUp } = useAuth();
+  const theme = useTheme();
 
   const handleSignUp = async () => {
     if (!email || !password || !confirmPassword) {
@@ -35,8 +37,6 @@ export default function SignUpScreen({ navigation }: any) {
 
     try {
       await signUp(email, password, name);
-      // If signUp succeeds without error, show email confirmation message
-      // (User will be auto-navigated to app if session exists, handled by AuthContext)
       setShowEmailConfirmation(true);
     } catch (err: any) {
       setError(err.message || 'Failed to sign up');
@@ -48,15 +48,15 @@ export default function SignUpScreen({ navigation }: any) {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.content}>
-        <Text variant="headlineLarge" style={styles.title}>
-          Create Account
+        <Text variant="displaySmall" style={[styles.title, { color: palette.inkDark }]}>
+          Join DO
         </Text>
-        <Text variant="bodyMedium" style={styles.subtitle}>
-          Start your productivity journey
+        <Text variant="bodyLarge" style={[styles.subtitle, { color: palette.inkLight }]}>
+          Don't organize tasks. Finish them.
         </Text>
 
         <TextInput
@@ -65,6 +65,7 @@ export default function SignUpScreen({ navigation }: any) {
           onChangeText={setName}
           style={styles.input}
           mode="outlined"
+          outlineStyle={styles.inputOutline}
         />
 
         <TextInput
@@ -75,6 +76,7 @@ export default function SignUpScreen({ navigation }: any) {
           keyboardType="email-address"
           style={styles.input}
           mode="outlined"
+          outlineStyle={styles.inputOutline}
         />
 
         <TextInput
@@ -84,6 +86,7 @@ export default function SignUpScreen({ navigation }: any) {
           secureTextEntry
           style={styles.input}
           mode="outlined"
+          outlineStyle={styles.inputOutline}
         />
 
         <TextInput
@@ -93,6 +96,7 @@ export default function SignUpScreen({ navigation }: any) {
           secureTextEntry
           style={styles.input}
           mode="outlined"
+          outlineStyle={styles.inputOutline}
         />
 
         {error ? (
@@ -102,14 +106,13 @@ export default function SignUpScreen({ navigation }: any) {
         ) : null}
 
         {showEmailConfirmation ? (
-          <View style={styles.successBox}>
-            <Text variant="titleMedium" style={styles.successTitle}>
-              ✅ Account Created!
+          <View style={[styles.successBox, { backgroundColor: palette.sageSurface, borderColor: palette.sageLight }]}>
+            <Text variant="titleMedium" style={[styles.successTitle, { color: palette.sageDark }]}>
+              Account Created
             </Text>
-            <Text variant="bodyMedium" style={styles.successMessage}>
-              Please check your email at{' '}
-              <Text style={styles.emailText}>{email}</Text> to confirm your
-              account and complete the signup process.
+            <Text variant="bodyMedium" style={[styles.successMessage, { color: palette.inkMedium }]}>
+              Check your email at{' '}
+              <Text style={{ fontWeight: '600' }}>{email}</Text> to confirm.
             </Text>
             <Button
               mode="outlined"
@@ -127,14 +130,16 @@ export default function SignUpScreen({ navigation }: any) {
           loading={loading}
           disabled={loading}
           style={styles.button}
+          contentStyle={styles.buttonContent}
         >
-          Sign Up
+          Create Account
         </Button>
 
         <Button
           mode="text"
           onPress={() => navigation.navigate('Login')}
           disabled={loading}
+          labelStyle={{ color: palette.sage }}
         >
           Already have an account? Sign In
         </Button>
@@ -149,48 +154,51 @@ const styles = StyleSheet.create({
   },
   content: {
     flexGrow: 1,
-    padding: 24,
+    padding: 32,
     justifyContent: 'center',
   },
   title: {
     marginBottom: 8,
     textAlign: 'center',
+    fontFamily: fonts.bold,
+    letterSpacing: 4,
   },
   subtitle: {
     marginBottom: 32,
     textAlign: 'center',
-    opacity: 0.7,
+    letterSpacing: 0.5,
   },
   input: {
-    marginBottom: 16,
+    marginBottom: 12,
+    backgroundColor: 'transparent',
+  },
+  inputOutline: {
+    borderRadius: 12,
   },
   button: {
     marginTop: 8,
-    marginBottom: 16,
+    marginBottom: 12,
+    borderRadius: 28,
+  },
+  buttonContent: {
+    paddingVertical: 8,
   },
   successBox: {
-    backgroundColor: '#e8f5e9',
-    padding: 16,
-    borderRadius: 8,
+    padding: 20,
+    borderRadius: 16,
     marginVertical: 16,
     borderWidth: 1,
-    borderColor: '#4caf50',
   },
   successTitle: {
-    color: '#2e7d32',
     marginBottom: 8,
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   successMessage: {
-    color: '#1b5e20',
     marginBottom: 12,
-    lineHeight: 20,
-  },
-  emailText: {
-    fontWeight: 'bold',
-    color: '#1b5e20',
+    lineHeight: 22,
   },
   backButton: {
     marginTop: 8,
+    borderRadius: 20,
   },
 });

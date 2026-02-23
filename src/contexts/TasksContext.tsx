@@ -1,7 +1,9 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { Task } from '../types';
 import { tasksService } from '../services/tasks';
 import { useAuth } from './AuthContext';
+import { getCelebrationMessage, triggerHaptic } from '../utils/celebrations';
+import { useGoals } from './GoalsContext';
 
 interface TasksContextType {
   tasks: Task[];
@@ -11,6 +13,8 @@ interface TasksContextType {
   updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
   toggleTask: (id: string) => Promise<void>;
+  celebrationMessage: string | null;
+  clearCelebration: () => void;
 }
 
 const TasksContext = createContext<TasksContextType | undefined>(undefined);
@@ -18,7 +22,9 @@ const TasksContext = createContext<TasksContextType | undefined>(undefined);
 export function TasksProvider({ children }: { children: React.ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const [celebrationMessage, setCelebrationMessage] = useState<string | null>(null);
   const { session } = useAuth();
+  const { goals } = useGoals();
 
   const refreshTasks = async () => {
     if (!session?.user?.id) return;
@@ -59,9 +65,36 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
     const task = tasks.find((t) => t.id === id);
     if (!task) return;
 
-    const updatedTask = await tasksService.toggleTask(id, !task.completed);
+    const willComplete = !task.completed;
+    const updatedTask = await tasksService.toggleTask(id, willComplete);
     setTasks((prev) => prev.map((t) => (t.id === id ? updatedTask : t)));
+
+    if (willComplete) {
+      // Build goal progress info for celebration message
+      let goalProgress: { name: string; completed: number; total: number } | undefined;
+      if (task.goalId) {
+        const goal = goals.find((g) => g.id === task.goalId);
+        if (goal) {
+          // Count tasks for this goal (including the one just completed)
+          const goalTasks = tasks.filter((t) => t.goalId === task.goalId);
+          const completedCount = goalTasks.filter((t) => t.completed || t.id === id).length;
+          goalProgress = {
+            name: goal.title,
+            completed: completedCount,
+            total: goalTasks.length,
+          };
+        }
+      }
+
+      const message = getCelebrationMessage(task, goalProgress);
+      setCelebrationMessage(message);
+      triggerHaptic();
+    }
   };
+
+  const clearCelebration = useCallback(() => {
+    setCelebrationMessage(null);
+  }, []);
 
   return (
     <TasksContext.Provider
@@ -73,6 +106,8 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
         updateTask,
         deleteTask,
         toggleTask,
+        celebrationMessage,
+        clearCelebration,
       }}
     >
       {children}

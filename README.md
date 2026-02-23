@@ -1,320 +1,149 @@
-# Behavioral Todo App
+# ~~TO~~ DO
 
-**Status**: Phase 1 Foundation - 85% Complete ✅
-**Last Updated**: 2025-11-16
+**Don't organize tasks. Finish them.**
 
-A mobile todo app based on behavioral science principles (BJ Fogg's Behavior Model) designed to improve productivity through habit formation, adaptive difficulty, and psychological triggers.
+A behavioral task app that hides the list. Instead of showing you 30 tasks and letting you freeze, DO shows you **one task at a time**, matched to your current energy level. Built on BJ Fogg's Behavior Model (B=MAP) and ADHD research on decision paralysis, time blindness, and the "wall of awful."
 
-> 📋 **See [HANDOFF.md](./HANDOFF.md) for detailed development status and next steps**
+Try it: [do-app.vercel.app](https://do-app.vercel.app) (tap "Try the Experience" — no account needed)
 
-## About This Project
+---
 
-**Purpose**: Learn Claude Code mastery while building a portfolio-worthy mobile app that applies behavioral science to task management.
+## The Problem
 
-**Learning Goals**:
-- Master Claude Code as a power user
-- Build using TDD (Test-Driven Development)
-- Apply behavioral science principles to product design
-- Create compelling portfolio piece for PM interviews
+Every todo app solves organization. None solve completion.
 
-**What Makes This Different From Other Todo Apps**:
-1. **Smart Calendar Tetris**: AI finds optimal time slots based on your energy patterns
-2. **"I Have 15 Minutes"**: Get instant task recommendations based on available time and context
-3. **Goal-Aligned Progress**: See how each task impacts your bigger goals in real-time
-4. **Psychological Reframing**: Task reminders optimized using behavioral science
-5. **Work Styles Modes**: Switch between Deep Work, Sprint, Habit modes for focused task views
-6. **Predictive Intelligence**: Get warned about likely failures before they happen
-7. **Dependency Intelligence**: Surface high-impact "unblocking" tasks automatically
+You open Todoist. You see 30 tasks. You feel overwhelmed. You close Todoist. You open Instagram instead.
 
-**Behavioral Science Principles Applied**:
-- Implementation Intentions ("When X happens, I will Y")
-- Adaptive Difficulty (Fogg's Ability factor)
-- Small Wins and celebration triggers
-- Fresh Start Effect (weekly + daily temporal anchors)
-- Loss Aversion & Identity Framing (psychological optimization)
-- Energy-Task Matching (cognitive load management)
-- Social Accountability (witnesses, pods)
+The list is the problem. Lists create decision fatigue, trigger overwhelm, and enable avoidance. The more organized your list, the more paralyzing it becomes.
+
+## What DO Does Differently
+
+| Principle | What It Means | How DO Implements It |
+|-----------|--------------|---------------------|
+| **Anti-List** | The default view is one task, not a scrollable list | Focus screen shows a single card — the best task for right now |
+| **Energy-First** | Your capacity changes throughout the day | App opens with "How's your energy?" and matches tasks to your state |
+| **Shame-Free** | No red overdue badges, no broken streaks | Returning after days away: "Welcome back. Here's one thing." |
+| **Momentum** | Streaks punish one miss with a reset to zero | Momentum decays gradually — missing a day slows you down, never resets |
+| **Time Training** | ADHD users can't estimate time | Before each task, guess the time. After, see how you did. Accuracy improves. |
+
+---
+
+## Features
+
+### Focus Mode (Primary Surface)
+- Energy check on app open (Low / Steady / Wired)
+- One-task-at-a-time card with rationale for why this task, right now
+- "Do it" starts a timer, "Not this" slides to the next recommendation
+- Completion celebrations with haptic feedback and contextual messages
+- Time perception training: your estimate vs actual time
+
+### Goals & Progress
+- Link tasks to goals and track progress with visual progress bars
+- Progress bar fills as you complete linked tasks (color shifts from gray → amber → orange → green)
+- Goal-grouped task view shows the big picture when you need it
+- Completing a task toward a goal? The next recommendation boosts same-goal tasks to keep your momentum
+
+### Momentum Meter
+- 7-day rolling momentum bar (never resets to zero)
+- Weekly sparkline showing daily completions
+- Levels: Getting started → Building nicely → On a roll → Unstoppable
+
+### Behavioral Task Creation
+- Time estimate chips (5/15/30/60 min)
+- Difficulty selector (Easy/Medium/Hard) — used for energy matching
+- Goal linking with progress visualization
+
+### Guided Onboarding
+- New users get a hands-on tutorial through the Focus screen itself
+- 5 seed tasks that teach by doing — each task is a lesson about a feature
+- No modal walkthroughs, no coach marks — the product teaches itself
 
 ---
 
 ## Tech Stack
 
-**Frontend**: React Native + Expo + TypeScript
-- Cross-platform mobile (iOS/Android)
-- Expo for simplified development
-- TypeScript for type safety
-
-**Backend**: Supabase (Free Tier)
-- PostgreSQL database
-- Built-in authentication
-- Real-time capabilities
-- Generous free tier (500MB, 50K users/month)
-
-**AI Integration**: OpenAI/Anthropic APIs
-- Behavioral prompts and coaching
-- Free tier available for development
-
-**Development Tools**:
-- Jest for testing (TDD approach)
-- ESLint + Prettier for code quality
-- Git for version control
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React Native + Expo 54 + TypeScript |
+| UI | React Native Paper (Material Design 3) |
+| Backend | Supabase (PostgreSQL + Auth + RLS) |
+| State | React Context |
+| Navigation | React Navigation (bottom tabs + native stack) |
+| Haptics | expo-haptics |
+| Hosting | Vercel (web) |
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
+- Node.js v18+
+- A Supabase project ([free tier](https://supabase.com))
 
-1. **Node.js** (v18 or higher)
-   ```bash
-   node --version
-   ```
+### Setup
 
-2. **Expo Go app** on your iPhone
-   - Download from App Store: [Expo Go](https://apps.apple.com/app/expo-go/id982107779)
-
-3. **Git** (for version control)
-
-### Installation
-
-1. **Clone and navigate to project**
-   ```bash
-   cd /Users/amithp/Documents/ai-pm-portfolio/behavioral-todo-app
-   ```
-
-2. **Install dependencies** (already done during setup)
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server**
-   ```bash
-   npm start
-   ```
-
-   This will open Expo Dev Tools in your browser and show a QR code.
-
-4. **Open on your iPhone**
-   - Open Expo Go app
-   - Scan the QR code from terminal or browser
-   - App will load on your phone!
-
----
-
-## Running the App
-
-### Development Mode
-
-**Start server**:
 ```bash
+git clone https://github.com/Amith1596/do-app.git
+cd do-app
+npm install
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your Supabase URL and anon key
+
+# Run database migrations in Supabase SQL Editor:
+# 1. supabase/migrations/001_initial_schema.sql
+# 2. supabase/migrations/002_behavioral_fields.sql
+
 npm start
 ```
 
-**Scan QR code** with Expo Go app on iPhone.
+Press `w` for web, or scan the QR code with Expo Go on your phone.
 
-**Hot reload** is enabled - changes appear instantly!
-
-### Alternative Commands
+### Web Build & Deploy
 
 ```bash
-npm run ios        # Open iOS simulator (requires Xcode)
-npm run android    # Open Android emulator
-npm run web        # Run in web browser (for quick testing)
+npm run build:web    # outputs to dist/
+npx vercel --prod    # deploy to Vercel
 ```
 
 ---
 
-## Installing on iPhone (No App Store Needed)
-
-### Option 1: Expo Go (Development - Free)
-- Use Expo Go app to scan QR code
-- Best for development and testing
-- **Current approach** while building
-
-### Option 2: Development Build (TestFlight or Direct)
-When you want to test without Expo Go:
-
-1. **Create development build**:
-   ```bash
-   npm install -g eas-cli
-   eas login
-   eas build --profile development --platform ios
-   ```
-
-2. **Install via TestFlight** or direct download link
-
-3. **Use without Expo Go app**
-
-See: [Expo Development Builds](https://docs.expo.dev/develop/development-builds/introduction/)
-
----
-
-## Project Structure
+## Architecture
 
 ```
-behavioral-todo-app/
-├── App.tsx                 # Main app entry
-├── app.json               # Expo configuration
-├── package.json           # Dependencies
-├── tsconfig.json          # TypeScript config
-│
-├── src/
-│   ├── components/        # Reusable UI components
-│   ├── screens/           # App screens
-│   ├── services/          # API, Supabase, AI services
-│   ├── hooks/             # Custom React hooks
-│   ├── utils/             # Utility functions
-│   ├── types/             # TypeScript types
-│   └── constants/         # App constants
-│
-├── __tests__/             # Test files
-│   ├── components/
-│   ├── screens/
-│   └── services/
-│
-├── assets/                # Images, fonts, etc.
-│
-├── docs/                  # Additional documentation
-│   └── PROJECT_BRIEF.md   # Original project brief
-│
-├── README.md             # This file
-└── claude.md             # Claude Code context
+src/
+  components/     EnergySelector, FocusCard, TimerView, MomentumMeter, TaskItem, ...
+  contexts/       Auth, Tasks, Goals (React Context providers)
+  hooks/          useGoalProgress
+  navigation/     Bottom tabs: Focus > Tasks > Goals > Profile
+  screens/        FocusScreen (primary), TasksScreen, GoalsScreen, ProfileScreen, Login, SignUp
+  services/       Supabase API layer (auth, tasks, goals, seedData)
+  theme/          Warm Confidence palette (sage, terracotta, cream)
+  types/          Task, Goal, EnergyState, MomentumData, TimerSession
+  utils/          Recommendation engine, momentum calculator, celebrations
 ```
 
 ---
 
-## Development Workflow
+## Behavioral Science References
 
-This project follows **Test-Driven Development (TDD)**:
-
-1. **Write test first** (red)
-2. **Implement feature** (green)
-3. **Refactor** (clean)
-4. **Document decision** in claude.md
-
-### Running Tests
-
-```bash
-npm test                # Run all tests
-npm test -- --watch     # Run in watch mode
-npm test -- --coverage  # Generate coverage report
-```
+- **BJ Fogg's B=MAP**: Behavior = Motivation x Ability x Prompt
+- **Dr. Russell Barkley**: Time blindness as core ADHD deficit
+- **Brendan Mahan**: "Wall of Awful" — emotional barrier to task initiation
+- **Dr. Ned Hallowell**: Structured external systems for ADHD management
+- **Gollwitzer & Sheeran (2006)**: Implementation intentions double follow-through
 
 ---
 
-## Features (Roadmap)
+## What's Next
 
-### Phase 1: Foundation & Core Intelligence ✅ In Progress
-- [x] Project initialization
-- [x] Basic app structure
-- [x] Feature concept brainstorming (15+ unique concepts)
-- [ ] Supabase setup and authentication
-- [ ] Basic task CRUD with goal linking
-- [ ] "I Have X Minutes" recommendation engine
-- [ ] Simple dependency detection
+**Phase 2: The Brain Dump** — AI-powered task capture. Stream-of-consciousness text input → structured tasks extracted by Claude API → smart re-planning → intelligent decomposition.
 
-### Phase 2: Behavioral Intelligence
-- [ ] Implementation Intentions (task prompts)
-- [ ] Adaptive difficulty algorithm
-- [ ] Progress tracking with celebrations
-- [ ] Weekly reset with reflection
-- [ ] Smart Calendar Tetris (AI scheduling)
-- [ ] Work Styles context switching
-- [ ] Micro-goal momentum milestones
-- [ ] Energy-Task Matching
-
-### Phase 3: Advanced AI & Social
-- [ ] AI-powered behavioral coaching (Psychological Reframing)
-- [ ] Predictive Failure Warnings
-- [ ] Habit streak tracking
-- [ ] Social accountability features (Goal Witnesses, Accountability Pods)
-- [ ] Data visualization with velocity tracking
-- [ ] Temporal manipulation features
-
-**Detailed feature specifications**: See `docs/FEATURE_CONCEPTS.md`
-
----
-
-## Supabase Setup (Next Step)
-
-1. **Create Supabase account**: [https://supabase.com](https://supabase.com)
-2. **Create new project** (free tier)
-3. **Get API keys** from project settings
-4. **Add to environment**: Create `.env` file (not committed)
-5. **Install client**:
-   ```bash
-   npm install @supabase/supabase-js
-   ```
-
-Full setup instructions in: `docs/SUPABASE_SETUP.md` (to be created)
-
----
-
-## Learning Path
-
-This project teaches Claude Code features progressively:
-
-1. **Week 1**: Basic TDD, git workflow, custom commands
-2. **Week 2**: Agents, more complex features, state management
-3. **Week 3**: MCPs, worktrees, advanced features, deployment
-
-See `docs/LEARNING_ROADMAP.md` for detailed plan (to be created)
-
----
-
-## Troubleshooting
-
-### Expo Go won't connect
-- Ensure phone and computer on same WiFi
-- Try tunnel mode: `npm start -- --tunnel`
-- Check firewall settings
-
-### Dependencies issues
-```bash
-rm -rf node_modules package-lock.json
-npm install
-```
-
-### TypeScript errors
-```bash
-npm run typescript:check
-```
-
----
-
-## Resources
-
-**Expo Documentation**: https://docs.expo.dev/
-**React Native**: https://reactnative.dev/
-**Supabase**: https://supabase.com/docs
-**BJ Fogg's Behavior Model**: https://behaviormodel.org/
-
----
-
-## Development Notes
-
-**Start Date**: 2025-11-12
-**Developer**: Amith (Ex-Microsoft SWE → Wharton MBA → PM)
-**Status**: In Development
-
-**Learning insights and decisions are tracked in**:
-- `claude.md` (project-specific)
-- `../neural-vault/04_CONTEXT/project_tracking/behavioral-todo-app.md` (cross-project learnings)
+See `PRD.md` for the full spec.
 
 ---
 
 ## License
 
-Private project for portfolio purposes.
-
----
-
-## Next Steps
-
-1. ✅ Project initialized
-2. 🔄 Run `npm start` and test on iPhone
-3. ⏳ Set up Supabase
-4. ⏳ Implement first feature (TDD)
-5. ⏳ Create custom Claude Code commands
-
-**Current Status**: Ready for development! 🚀
+MIT

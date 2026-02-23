@@ -2,13 +2,15 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useTheme, ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, StyleSheet } from 'react-native';
 
 import { useAuth } from '../contexts/AuthContext';
+import { palette, fonts } from '../theme';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
+import FocusScreen from '../screens/FocusScreen';
 import TasksScreen from '../screens/TasksScreen';
 import GoalsScreen from '../screens/GoalsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -26,22 +28,55 @@ function AuthStack() {
 }
 
 function MainTabs() {
-  const theme = useTheme();
-
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.onSurfaceDisabled,
-        headerShown: true,
+        tabBarActiveTintColor: palette.sage,
+        tabBarInactiveTintColor: palette.inkFaint,
+        tabBarStyle: {
+          backgroundColor: palette.warmWhite,
+          borderTopColor: palette.border,
+          borderTopWidth: 1,
+          paddingTop: 6,
+          height: 60,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontFamily: fonts.medium,
+          letterSpacing: 0.5,
+          textTransform: 'uppercase' as const,
+        },
+        headerStyle: {
+          backgroundColor: palette.cream,
+          shadowColor: 'transparent',
+          elevation: 0,
+        },
+        headerTitleStyle: {
+          color: palette.inkDark,
+          fontFamily: fonts.bold,
+          fontSize: 22,
+          letterSpacing: 3,
+        },
+        headerShadowVisible: false,
       }}
     >
+      <Tab.Screen
+        name="Focus"
+        component={FocusScreen}
+        options={{
+          headerTitle: 'DO',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="lightning-bolt" size={size} color={color} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Tasks"
         component={TasksScreen}
         options={{
+          headerTitle: 'All Tasks',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="checkbox-marked-circle-outline" size={size} color={color} />
+            <MaterialCommunityIcons name="format-list-checks" size={size} color={color} />
           ),
         }}
       />
@@ -49,6 +84,7 @@ function MainTabs() {
         name="Goals"
         component={GoalsScreen}
         options={{
+          headerTitle: 'Goals',
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="target" size={size} color={color} />
           ),
@@ -58,8 +94,9 @@ function MainTabs() {
         name="Profile"
         component={ProfileScreen}
         options={{
+          headerTitle: 'Profile',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account" size={size} color={color} />
+            <MaterialCommunityIcons name="account-circle-outline" size={size} color={color} />
           ),
         }}
       />
@@ -72,8 +109,8 @@ export default function AppNavigator() {
 
   if (loading) {
     return (
-      <View style={styles.loading}>
-        <ActivityIndicator size="large" />
+      <View style={[styles.loading, { backgroundColor: palette.cream }]}>
+        <ActivityIndicator size="large" color={palette.sage} />
       </View>
     );
   }
