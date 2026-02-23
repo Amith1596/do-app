@@ -2,7 +2,7 @@
 
 **Don't organize tasks. Finish them.**
 
-A behavioral task app that hides the list. Instead of showing you 30 tasks and letting you freeze, DO shows you **one task at a time**, matched to your current energy level. Built on BJ Fogg's Behavior Model (B=MAP) and ADHD research on decision paralysis, time blindness, and the "wall of awful."
+A behavioral task app that hides the list. Instead of showing you 30 tasks and letting you freeze, DO shows you **one task at a time**, matched to your current energy level. Every feature is designed around a specific behavioral science insight — not productivity theater.
 
 Try it: [do-app.vercel.app](https://do-app.vercel.app) (tap "Try the Experience" — no account needed)
 
@@ -16,47 +16,105 @@ You open Todoist. You see 30 tasks. You feel overwhelmed. You close Todoist. You
 
 The list is the problem. Lists create decision fatigue, trigger overwhelm, and enable avoidance. The more organized your list, the more paralyzing it becomes.
 
-## What DO Does Differently
+---
 
-| Principle | What It Means | How DO Implements It |
-|-----------|--------------|---------------------|
-| **Anti-List** | The default view is one task, not a scrollable list | Focus screen shows a single card — the best task for right now |
-| **Energy-First** | Your capacity changes throughout the day | App opens with "How's your energy?" and matches tasks to your state |
-| **Shame-Free** | No red overdue badges, no broken streaks | Returning after days away: "Welcome back. Here's one thing." |
-| **Momentum** | Streaks punish one miss with a reset to zero | Momentum decays gradually — missing a day slows you down, never resets |
-| **Time Training** | ADHD users can't estimate time | Before each task, guess the time. After, see how you did. Accuracy improves. |
+## Design Decisions: Research → Feature
+
+Every feature in DO maps to a specific behavioral problem and the research behind it. This isn't a todo app with a coat of paint — it's a deliberate set of design bets.
+
+### 1. One task at a time (Focus Screen)
+
+**Problem**: Choice overload causes decision paralysis. More options = more friction = less action.
+
+**Research**: Hick's Law — reaction time increases logarithmically with the number of choices. Sheena Iyengar's jam study showed that 24 options led to 1/10th the purchases of 6 options. BJ Fogg's Ability axis in B=MAP — reducing decision friction directly increases the likelihood of behavior.
+
+**What we built**: The Focus screen shows a single task card, not a list. A recommendation engine scores every task and surfaces the best one for right now. You see "Do it" or "Not this" — two choices, not thirty.
+
+**Code**: `src/screens/FocusScreen.tsx`, `src/utils/recommendations.ts`
 
 ---
 
-## Features
+### 2. Energy matching (Low / Steady / Wired)
 
-### Focus Mode (Primary Surface)
-- Energy check on app open (Low / Steady / Wired)
-- One-task-at-a-time card with rationale for why this task, right now
-- "Do it" starts a timer, "Not this" slides to the next recommendation
-- Completion celebrations with haptic feedback and contextual messages
-- Time perception training: your estimate vs actual time
+**Problem**: Todo apps treat you as a constant — same list at 9am and 9pm, whether you slept 8 hours or 4. But your capacity fluctuates throughout the day.
 
-### Goals & Progress
-- Link tasks to goals and track progress with visual progress bars
-- Progress bar fills as you complete linked tasks (color shifts from gray → amber → orange → green)
-- Goal-grouped task view shows the big picture when you need it
-- Completing a task toward a goal? The next recommendation boosts same-goal tasks to keep your momentum
+**Research**: BJ Fogg's B=MAP — **B**ehavior = **M**otivation × **A**bility × **P**rompt. When energy is low, Ability drops. Fogg's insight: instead of trying to boost motivation (hard), match the task to current ability (easy). Low energy + easy task = behavior happens. Low energy + hard task = avoidance.
 
-### Momentum Meter
-- 7-day rolling momentum bar (never resets to zero)
-- Weekly sparkline showing daily completions
-- Levels: Getting started → Building nicely → On a roll → Unstoppable
+**What we built**: App opens with "How's your energy?" (Low / Steady / Wired). The recommendation engine filters by energy state — at Low, only easy or short tasks (≤15 min) are eligible. At Wired, hard tasks get boosted. The same task list produces different recommendations at different times of day.
 
-### Behavioral Task Creation
-- Time estimate chips (5/15/30/60 min)
-- Difficulty selector (Easy/Medium/Hard) — used for energy matching
-- Goal linking with progress visualization
+**Code**: `src/components/EnergySelector.tsx`, `filterByEnergy()` in `src/utils/recommendations.ts`
 
-### Guided Onboarding
-- New users get a hands-on tutorial through the Focus screen itself
-- 5 seed tasks that teach by doing — each task is a lesson about a feature
-- No modal walkthroughs, no coach marks — the product teaches itself
+---
+
+### 3. Momentum meter (never resets to zero)
+
+**Problem**: Streaks are punitive. Miss one day on a 30-day streak and it resets to zero. This triggers the "what-the-hell effect" — one slip makes people abandon the entire system.
+
+**Research**: The what-the-hell effect (Cochran & Tesser, 1996; also called "abstinence violation effect") — a single failure leads to complete goal abandonment. Counter-evidence: systems with gradual decay preserve motivation after setbacks. Alcoholics Anonymous's "one day at a time" is more effective than rigid streak tracking.
+
+**What we built**: A 7-day rolling momentum meter. Complete tasks → momentum builds. Miss a day → it decays slightly, but never resets. Levels: *Getting started → Building nicely → On a roll → Unstoppable*. Coming back after a week off? You're at "Ready to start," not "You broke your streak."
+
+**Code**: `src/utils/momentum.ts`, `src/components/MomentumMeter.tsx`
+
+---
+
+### 4. Time perception training
+
+**Problem**: Time blindness — the inability to accurately estimate how long things take. You think "this will take 10 minutes," it takes 45, and you blow up your whole day.
+
+**Research**: Dr. Russell Barkley identifies time blindness as a core executive function deficit in ADHD. It's not laziness — the internal clock is genuinely miscalibrated. Repeated estimation with immediate feedback is one of the few interventions shown to improve time perception over time.
+
+**What we built**: Every task has a time estimate. When you tap "Do it," a timer starts. When you finish, the app compares your estimate to actual time — with shame-free language: "You guessed 5 min, took 12 min — that's common, your estimates will get better" or "Faster than you thought!" Over time, the gap between estimate and actual narrows.
+
+**Code**: `src/components/TimerView.tsx`, `handleTimerDone()` in `src/screens/FocusScreen.tsx`
+
+---
+
+### 5. Shame-free language
+
+**Problem**: Every todo app weaponizes guilt. Red "overdue" badges, broken streak warnings, aggressive reminders. This builds what ADHD coach Brendan Mahan calls the **"Wall of Awful"** — accumulated negative emotions around a task that make starting it harder the longer you avoid it. The guilt doesn't motivate — it compounds the avoidance.
+
+**Research**: Brendan Mahan's Wall of Awful framework. Kristin Neff's self-compassion research shows that self-compassion consistently outperforms self-criticism for sustained behavior change. People who forgive themselves for procrastinating are *less* likely to procrastinate next time (Wohl, Pychyl, & Bennett, 2010).
+
+**What we built**: Zero guilt language anywhere in the app. Old tasks are described as "Been waiting patiently" — not "overdue." The empty state after completing everything is "Nothing right now — enjoy the quiet. You've earned it." A guest returning after weeks sees "A clean slate" — not a wall of shame. Skipping a task costs -1 point (soft), not a lecture.
+
+**Code**: Rationale strings in `src/utils/recommendations.ts`, empty states in `src/screens/FocusScreen.tsx`
+
+---
+
+### 6. Completion celebrations
+
+**Problem**: Traditional todo apps give you a checkbox. That's it. No emotional reinforcement, no acknowledgment. Completing a task feels the same as not completing one.
+
+**Research**: BJ Fogg's "Celebration" — the most underrated part of his model. Immediate positive emotion right after a behavior is what wires the habit loop. Not the reward at the end of the week. Not the streak count. The *feeling* in the moment of completion. Dopamine reinforcement happens in milliseconds, not minutes.
+
+**What we built**: Every completion triggers a contextual celebration message + haptic feedback. High-priority task? "Big one knocked out! That took guts." Task linked to a goal? "Done! You're now 60% through 'Launch portfolio'." Goal fully completed? "GOAL COMPLETE: Launch portfolio! Every task done." The message matches the significance of what you just did.
+
+**Code**: `src/utils/celebrations.ts`, haptics via `expo-haptics`
+
+---
+
+### 7. Context batching
+
+**Problem**: Bouncing between unrelated tasks kills flow state. You finish a work task, then the app suggests grocery shopping, then back to a different work project. The cognitive switching cost is real.
+
+**Research**: Gollwitzer's implementation intentions research (2006) — pre-committing to "when X, then Y" in a specific context doubles follow-through. Task inertia: you're significantly more likely to continue work in a domain you just completed something in.
+
+**What we built**: After completing a task linked to a goal, the recommendation engine boosts other tasks under the same goal (+2 score). Finish one task toward "Learn Spanish"? The next recommendation is more likely to be another Spanish task. Momentum builds within a context, not across random domains.
+
+**Code**: `lastCompletedGoalId` logic in `src/utils/recommendations.ts` (lines 99-103)
+
+---
+
+### 8. Onboarding through the product itself
+
+**Problem**: Traditional onboarding (modals, tooltips, coach marks) teaches you about the app. But people learn by doing, not by reading instructions they'll immediately forget.
+
+**Research**: BJ Fogg's Tiny Habits — start with the smallest possible version of the target behavior. The first experience should be a *real* use of the product, not a tutorial about the product.
+
+**What we built**: When a guest taps "Try the Experience," 5 seed tasks are created — each one teaches a feature by making you use it. Task 1: "Welcome to DO — tap 'Do it' below" (teaches Focus screen + timer). Task 2: "Check the Goals tab to see your progress" (teaches goal-task linkage). No modals, no overlays. The product teaches itself through its own core loop.
+
+**Code**: `src/services/seedData.ts`, triggered in `src/contexts/AuthContext.tsx`
 
 ---
 
@@ -123,16 +181,6 @@ src/
   types/          Task, Goal, EnergyState, MomentumData, TimerSession
   utils/          Recommendation engine, momentum calculator, celebrations
 ```
-
----
-
-## Behavioral Science References
-
-- **BJ Fogg's B=MAP**: Behavior = Motivation x Ability x Prompt
-- **Dr. Russell Barkley**: Time blindness as core ADHD deficit
-- **Brendan Mahan**: "Wall of Awful" — emotional barrier to task initiation
-- **Dr. Ned Hallowell**: Structured external systems for ADHD management
-- **Gollwitzer & Sheeran (2006)**: Implementation intentions double follow-through
 
 ---
 
