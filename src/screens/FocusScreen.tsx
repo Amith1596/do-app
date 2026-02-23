@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text, FAB, Snackbar, Button, ActivityIndicator } from 'react-native-paper';
+import { Text, FAB, Snackbar, Button } from 'react-native-paper';
 import { useTasks } from '../contexts/TasksContext';
 import { useGoals } from '../contexts/GoalsContext';
 import { EnergyState, TaskRecommendation, TimerSession } from '../types';
@@ -22,7 +22,7 @@ export default function FocusScreen() {
   const [timeComparison, setTimeComparison] = useState<string | null>(null);
   const [addModalVisible, setAddModalVisible] = useState(false);
 
-  const { tasks, loading, toggleTask, updateTask, celebrationMessage, clearCelebration } = useTasks();
+  const { tasks, toggleTask, updateTask, celebrationMessage, clearCelebration } = useTasks();
   const { goals } = useGoals();
 
   const momentum = useMemo(() => calculateMomentum(tasks), [tasks]);
@@ -129,15 +129,6 @@ export default function FocusScreen() {
     return (
       <View style={styles.container}>
         <EnergySelector onSelect={handleEnergySelect} />
-      </View>
-    );
-  }
-
-  // --- Loading (tasks haven't arrived from Supabase yet) ---
-  if (loading && tasks.length === 0) {
-    return (
-      <View style={[styles.container, styles.focusArea]}>
-        <ActivityIndicator size="large" color={palette.sage} />
       </View>
     );
   }

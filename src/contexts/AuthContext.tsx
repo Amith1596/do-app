@@ -32,9 +32,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
 
-    // Listen for auth changes
+    // Listen for auth changes (token refresh, server-side logout, etc.)
+    // Skip SIGNED_IN — we handle it explicitly in signIn/signUp/signInAsGuest
+    // to avoid a race condition where onAuthStateChange fires before seed data
+    // is written, triggering a premature task fetch against an empty database.
     const { data: { subscription } } = authService.onAuthStateChange(
-      (_event, session) => {
+      (event, session) => {
+        if (event === 'SIGNED_IN') return;
         setSession(session);
         setIsGuest(session?.user?.is_anonymous ?? false);
       }
