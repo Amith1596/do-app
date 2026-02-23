@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { Portal, Modal, Text } from 'react-native-paper';
-import { palette } from '../theme';
+import { palette, shadows } from '../theme';
 
 interface TimePickerModalProps {
   visible: boolean;
@@ -51,10 +51,11 @@ export default function TimePickerModal({ visible, onDismiss, onSelect }: TimePi
 
 const styles = StyleSheet.create({
   modal: {
-    backgroundColor: palette.cream,
+    backgroundColor: palette.warmWhite,
     padding: 28,
     margin: 20,
     borderRadius: 24,
+    ...shadows.lifted,
   },
   title: {
     textAlign: 'center',
@@ -76,10 +77,9 @@ const styles = StyleSheet.create({
   },
   timeCard: {
     width: '47%',
-    backgroundColor: palette.warmWhite,
+    backgroundColor: palette.cream,
     borderRadius: 16,
-    borderWidth: 1,
-    borderColor: palette.sand,
+    ...shadows.soft,
   },
   timeCardInner: {
     alignItems: 'center',

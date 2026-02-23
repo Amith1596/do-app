@@ -1,10 +1,11 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { Surface, Text } from 'react-native-paper';
+import { Pressable, StyleSheet, View, Animated } from 'react-native';
+import { Text } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { palette, fonts } from '../theme';
+import { palette, fonts, shadows } from '../theme';
 import { EnergyState } from '../types';
+import { usePressAnimation } from '../utils/animations';
 
 interface EnergySelectorProps {
   onSelect: (energy: EnergyState) => void;
@@ -46,6 +47,41 @@ const OPTIONS: EnergyOption[] = [
   },
 ];
 
+function EnergyOptionCard({
+  option,
+  onSelect,
+}: {
+  option: EnergyOption;
+  onSelect: (energy: EnergyState) => void;
+}) {
+  const { scale, onPressIn, onPressOut } = usePressAnimation(0.95);
+
+  return (
+    <Pressable
+      onPress={() => onSelect(option.energy)}
+      onPressIn={onPressIn}
+      onPressOut={onPressOut}
+    >
+      <Animated.View
+        style={[
+          styles.card,
+          { backgroundColor: option.backgroundColor, transform: [{ scale }] },
+        ]}
+      >
+        <MaterialCommunityIcons
+          name={option.icon}
+          size={32}
+          color={option.iconColor}
+        />
+        <View style={styles.textContainer}>
+          <Text style={styles.label}>{option.label}</Text>
+          <Text style={styles.subtitle}>{option.subtitle}</Text>
+        </View>
+      </Animated.View>
+    </Pressable>
+  );
+}
+
 export default function EnergySelector({ onSelect }: EnergySelectorProps) {
   return (
     <View style={styles.container}>
@@ -53,32 +89,11 @@ export default function EnergySelector({ onSelect }: EnergySelectorProps) {
 
       <View style={styles.optionsContainer}>
         {OPTIONS.map((option) => (
-          <Pressable
+          <EnergyOptionCard
             key={option.energy}
-            onPress={() => onSelect(option.energy)}
-            style={({ pressed }) => [
-              styles.pressable,
-              pressed && styles.pressablePressed,
-            ]}
-          >
-            <Surface
-              style={[
-                styles.card,
-                { backgroundColor: option.backgroundColor },
-              ]}
-              elevation={1}
-            >
-              <MaterialCommunityIcons
-                name={option.icon}
-                size={32}
-                color={option.iconColor}
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.label}>{option.label}</Text>
-                <Text style={styles.subtitle}>{option.subtitle}</Text>
-              </View>
-            </Surface>
-          </Pressable>
+            option={option}
+            onSelect={onSelect}
+          />
         ))}
       </View>
     </View>
@@ -104,12 +119,6 @@ const styles = StyleSheet.create({
     width: '100%',
     gap: 16,
   },
-  pressable: {
-    borderRadius: 20,
-  },
-  pressablePressed: {
-    opacity: 0.8,
-  },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -117,6 +126,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 24,
     minHeight: 80,
+    ...shadows.medium,
   },
   textContainer: {
     marginLeft: 16,

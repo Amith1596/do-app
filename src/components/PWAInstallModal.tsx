@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
 import { Portal, Modal, Button, Text, Surface } from 'react-native-paper';
-import { palette, fonts } from '../theme';
+import { palette, fonts, shadows } from '../theme';
 
 interface PWAInstallModalProps {
   visible: boolean;
@@ -104,11 +104,12 @@ export default function PWAInstallModal({ visible, onDismiss }: PWAInstallModalP
 
 const styles = StyleSheet.create({
   modal: {
-    backgroundColor: palette.cream,
+    backgroundColor: palette.warmWhite,
     padding: 24,
     margin: 20,
     borderRadius: 24,
     maxHeight: '85%',
+    ...shadows.lifted,
   },
   heading: {
     color: palette.inkDark,
@@ -124,12 +125,11 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
   },
   platformCard: {
-    backgroundColor: palette.warmWhite,
+    backgroundColor: palette.cream,
     borderRadius: 16,
     padding: 20,
     marginBottom: 12,
-    borderWidth: 1,
-    borderColor: palette.border,
+    ...shadows.soft,
   },
   platformTitle: {
     color: palette.inkDark,

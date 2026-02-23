@@ -3,7 +3,7 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { Portal, Modal, TextInput, Button, Text } from 'react-native-paper';
 import { useGoals } from '../contexts/GoalsContext';
 import { Goal } from '../types';
-import { palette, fonts } from '../theme';
+import { palette, fonts, shadows } from '../theme';
 
 interface EditGoalModalProps {
   visible: boolean;
@@ -103,10 +103,11 @@ export default function EditGoalModal({ visible, goal, onDismiss }: EditGoalModa
 
 const styles = StyleSheet.create({
   modal: {
-    backgroundColor: palette.cream,
+    backgroundColor: palette.warmWhite,
     padding: 24,
     margin: 20,
     borderRadius: 24,
+    ...shadows.lifted,
   },
   title: {
     marginBottom: 16,

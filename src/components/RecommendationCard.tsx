@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Surface, Text, Button } from 'react-native-paper';
 import { TaskRecommendation, Goal } from '../types';
-import { palette } from '../theme';
+import { palette, shadows } from '../theme';
 
 interface RecommendationCardProps {
   recommendation: TaskRecommendation;
@@ -79,8 +79,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: palette.warmWhite,
     padding: 20,
-    borderWidth: 1,
-    borderColor: palette.sageLight,
+    ...shadows.medium,
   },
   label: {
     color: palette.sage,

@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, Surface, Text } from 'react-native-paper';
+import { View, StyleSheet, Animated } from 'react-native';
+import { Button, Text } from 'react-native-paper';
 import { TaskRecommendation } from '../types';
-import { palette, fonts } from '../theme';
+import { palette, fonts, shadows } from '../theme';
+import { useEntranceAnimation } from '../utils/animations';
 
 const DIFFICULTY_COLORS: Record<string, { bg: string; text: string }> = {
   easy: { bg: palette.diffEasy, text: palette.diffEasyText },
@@ -24,6 +25,7 @@ export default function FocusCard({
   onNotThis,
 }: FocusCardProps) {
   const { task, rationale } = recommendation;
+  const { opacity, translateY } = useEntranceAnimation(task.id);
 
   const badges: React.ReactNode[] = [];
 
@@ -59,7 +61,15 @@ export default function FocusCard({
   }
 
   return (
-    <Surface style={styles.card} elevation={1}>
+    <Animated.View
+      style={[
+        styles.card,
+        {
+          opacity,
+          transform: [{ translateY }],
+        },
+      ]}
+    >
       {badges.length > 0 && (
         <View style={styles.badgeRow}>{badges}</View>
       )}
@@ -103,7 +113,7 @@ export default function FocusCard({
           Do it
         </Button>
       </View>
-    </Surface>
+    </Animated.View>
   );
 }
 
@@ -113,8 +123,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     backgroundColor: palette.warmWhite,
     padding: 28,
-    borderWidth: 1,
-    borderColor: palette.border,
+    ...shadows.lifted,
   },
   badgeRow: {
     flexDirection: 'row',

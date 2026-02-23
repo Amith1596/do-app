@@ -20,8 +20,8 @@ const palette = {
   terracottaLight: '#FFE4E6',
 
   // Warm foundations
-  cream: '#FAF8F4',
-  warmWhite: '#FFFFFF',
+  cream: '#FAF5EF',
+  warmWhite: '#FFFBF7',
   sand: '#F3EDE5',
   sandDark: '#E7E5E4',
 
@@ -50,6 +50,14 @@ const palette = {
   energyWired: '#F43F5E',
   energyWiredBg: '#FFF1F2',
   energyWiredText: '#BE123C',
+
+  // Energy-reactive screen backgrounds (very diluted — atmospheric, not distracting)
+  // Low: soft lavender — calming, "it's okay to go slow"
+  energyScreenLow: '#EEEDF5',
+  // Steady: warm cream — balanced, productive focus (matches default)
+  energyScreenSteady: '#FAF5EF',
+  // Wired: subtle warm rose — channels high energy into action
+  energyScreenWired: '#F9EDEB',
 
   // Difficulty badges
   diffEasy: '#BBF7D0',
@@ -90,6 +98,31 @@ export const radius = {
   lg: 16,
   xl: 24,
   full: 999,
+};
+
+// Shadow presets — warm-tinted shadows for depth without coldness
+export const shadows = {
+  soft: {
+    shadowColor: '#78716C',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  medium: {
+    shadowColor: '#78716C',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 3,
+  },
+  lifted: {
+    shadowColor: '#78716C',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.12,
+    shadowRadius: 20,
+    elevation: 5,
+  },
 };
 
 // Typography config for React Native Paper MD3

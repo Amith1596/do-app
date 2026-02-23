@@ -1,8 +1,9 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { Surface, Text } from 'react-native-paper';
-import { palette, fonts } from '../theme';
+import { Pressable, StyleSheet, View, Animated } from 'react-native';
+import { Text } from 'react-native-paper';
+import { palette, fonts, shadows } from '../theme';
 import { MomentumData } from '../types';
+import { usePressAnimation } from '../utils/animations';
 
 interface MomentumMeterProps {
   momentum: MomentumData;
@@ -25,12 +26,13 @@ const MomentumMeter: React.FC<MomentumMeterProps> = ({ momentum, onPress }) => {
   const { completedLast7Days, dailyCounts, level, label } = momentum;
   const fillPercent = Math.min(100, (completedLast7Days / 10) * 100);
   const fillColor = FILL_COLORS[level];
+  const { scale, onPressIn, onPressOut } = usePressAnimation(0.98);
 
   const maxCount = Math.max(...dailyCounts, 1);
 
   return (
-    <Pressable onPress={onPress} style={styles.pressable}>
-      <Surface style={styles.surface}>
+    <Pressable onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut} style={styles.pressable}>
+      <Animated.View style={[styles.surface, { transform: [{ scale }] }]}>
         <View style={styles.headerRow}>
           <Text style={styles.label} variant="labelLarge">
             {label}
@@ -68,7 +70,7 @@ const MomentumMeter: React.FC<MomentumMeterProps> = ({ momentum, onPress }) => {
             );
           })}
         </View>
-      </Surface>
+      </Animated.View>
     </Pressable>
   );
 };
@@ -83,8 +85,7 @@ const styles = StyleSheet.create({
     backgroundColor: palette.warmWhite,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: palette.border,
+    ...shadows.medium,
   },
   headerRow: {
     flexDirection: 'row',

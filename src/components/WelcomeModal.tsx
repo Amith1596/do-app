@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Portal, Modal, Text, Button } from 'react-native-paper';
-import { palette, fonts, spacing, radius } from '../theme';
+import { palette, fonts, spacing, radius, shadows } from '../theme';
 
 interface WelcomeModalProps {
   visible: boolean;
@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     backgroundColor: palette.warmWhite,
     overflow: 'hidden',
+    ...shadows.lifted,
   },
   content: {
     padding: spacing.xl,
