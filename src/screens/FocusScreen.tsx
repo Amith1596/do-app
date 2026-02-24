@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
-import { StyleSheet, Animated } from 'react-native';
+import { StyleSheet, Animated, ScrollView } from 'react-native';
 import { View } from 'react-native';
 import { Text, FAB, Snackbar, Button } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
@@ -176,7 +176,7 @@ export default function FocusScreen() {
       ) : !energy ? (
         <EnergySelector onSelect={handleEnergySelect} />
       ) : (
-        <>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
           {/* Momentum meter */}
           <MomentumMeter momentum={momentum} />
 
@@ -255,7 +255,7 @@ export default function FocusScreen() {
               {todayCount} task{todayCount !== 1 ? 's' : ''} done today
             </Text>
           )}
-        </>
+        </ScrollView>
       )}
 
       {/* Quick add FAB */}

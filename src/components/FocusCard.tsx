@@ -74,16 +74,12 @@ export default function FocusCard({
         <View style={styles.badgeRow}>{badges}</View>
       )}
 
-      <Text variant="headlineSmall" style={styles.title}>
+      <Text variant="headlineSmall" style={styles.title} numberOfLines={3}>
         {task.title}
       </Text>
 
       {task.description ? (
-        <Text
-          variant="bodyMedium"
-          style={styles.description}
-          numberOfLines={2}
-        >
+        <Text variant="bodyMedium" style={styles.description}>
           {task.description}
         </Text>
       ) : null}
@@ -122,7 +118,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 24,
     backgroundColor: palette.warmWhite,
-    padding: 28,
+    padding: 24,
     ...shadows.lifted,
   },
   badgeRow: {
@@ -146,7 +142,7 @@ const styles = StyleSheet.create({
     color: palette.inkDark,
     fontFamily: fonts.bold,
     textAlign: 'center',
-    marginVertical: 20,
+    marginVertical: 16,
     letterSpacing: -0.5,
   },
   description: {

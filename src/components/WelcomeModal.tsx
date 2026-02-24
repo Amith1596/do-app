@@ -26,9 +26,13 @@ export default function WelcomeModal({ visible, onDismiss, userName }: WelcomeMo
             You just took the first step toward a calmer, more focused way to get things done.
           </Text>
 
+          <Text style={styles.philosophy}>
+            Every feature is grounded in behavioral science, designed to make starting easier and finishing feel natural.
+          </Text>
+
           <Text style={styles.body}>
             Try DO for just one week. Use it as your only task app. Your feedback would be
-            invaluable — this is a real behavioral experiment and every bit of input helps
+            invaluable. This is a real behavioral experiment and every bit of input helps
             make it better.
           </Text>
 
@@ -85,6 +89,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: spacing.sm,
+  },
+  philosophy: {
+    fontFamily: fonts.regular,
+    fontSize: 13,
+    color: palette.inkLight,
+    textAlign: 'center',
+    lineHeight: 18,
+    marginBottom: spacing.md,
+    fontStyle: 'italic',
   },
   subtext: {
     fontFamily: fonts.regular,

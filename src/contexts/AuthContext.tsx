@@ -70,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setSession(newSession);
     setIsGuest(true);
+    setShowWelcome(true);
   };
 
   const convertGuest = async (email: string, password: string, name?: string) => {
