@@ -11,37 +11,37 @@ interface OnboardingTask {
 
 const ONBOARDING_TASKS: OnboardingTask[] = [
   {
-    title: "Welcome to DO — tap 'Do it' below",
+    title: 'Welcome to DO',
     description:
-      "This is your Focus screen. Instead of a list, DO shows you one task at a time — the best match for your energy right now. Tap 'Do it' to start a timer that tracks actual vs estimated time, training your time perception. Tap 'Done' when you're ready.\n\nWhy it works: Hick's Law — fewer choices means faster action. One task beats a list of twenty.",
+      "This is your Focus screen. Instead of a long list, DO shows you one task at a time, matched to your energy right now. Read the card, then tap 'Do it' to start a timer that tracks how long you actually take vs your estimate. When you're done, tap 'Done'.\n\nWhy it works: Hick's Law says fewer choices means faster action. One task beats a list of twenty.",
     estimatedMinutes: 1,
     offsetMinutes: 5,
   },
   {
     title: 'Check the Goals tab (target icon) to see your progress',
     description:
-      "Look for the target icon in the bottom navigation bar. Every task can be linked to a goal. As you complete tasks, the goal's progress bar fills up. This task is part of your \"Learn how DO works\" goal — completing it moves the bar forward. Head to the Goals tab to see it, then come back here.\n\nWhy it works: Goal Gradient Effect — visible progress toward a finish line increases motivation.",
+      "Look for the target icon in the bottom navigation bar. Every task can be linked to a goal. As you complete tasks, the goal's progress bar fills up. This task is part of your \"Learn how DO works\" goal, so completing it moves the bar forward. Head to the Goals tab to see it, then come back here.\n\nWhy it works: The Goal Gradient Effect says visible progress toward a finish line increases motivation.",
     estimatedMinutes: 2,
     offsetMinutes: 4,
   },
   {
     title: 'Tap + to add your own task',
     description:
-      "Now add something real! Tap the orange + button. Set a title, pick a difficulty, estimate the time. You can link it to a goal too — the more detail you add, the smarter DO gets at picking your next task.\n\nWhy it works: Implementation Intentions — specifying difficulty and time makes you 2-3x more likely to start.",
+      "Now add something real! Tap the orange + button. Set a title, pick a difficulty, estimate the time. You can link it to a goal too. The more detail you add, the smarter DO gets at picking your next task.\n\nWhy it works: Implementation Intentions research shows that specifying difficulty and time makes you 2-3x more likely to start.",
     estimatedMinutes: 2,
     offsetMinutes: 3,
   },
   {
     title: 'Switch to the Tasks tab (checklist icon) and back',
     description:
-      "Look for the checklist icon in the bottom navigation bar. The Tasks tab shows everything as a traditional list — grouped by goal so you can see the big picture. But Focus is where the magic happens — one thing at a time. Try switching tabs.\n\nWhy it works: The list exists for reference, but single-task focus reduces cognitive load (Cognitive Load Theory).",
+      "Look for the checklist icon in the bottom navigation bar. The Tasks tab shows everything as a traditional list, grouped by goal so you can see the big picture. But Focus is where the magic happens: one thing at a time. Try switching tabs.\n\nWhy it works: The list exists for reference, but single-task focus reduces cognitive load (Cognitive Load Theory).",
     estimatedMinutes: 1,
     offsetMinutes: 2,
   },
   {
     title: 'Change your energy level',
     description:
-      "Tap 'Change' next to your energy level above. When you're Low, DO only suggests easy tasks. When Wired, it brings on the hard stuff. Your energy changes throughout the day — DO adapts with you.\n\nWhy it works: Fogg's Behavior Model — matching task difficulty to your current energy makes starting effortless.",
+      "Tap 'Change' next to your energy level above. When you're Low, DO only suggests easy tasks. When Wired, it brings on the hard stuff. Your energy changes throughout the day and DO adapts with you.\n\nWhy it works: Fogg's Behavior Model says matching task difficulty to your current energy makes starting effortless.",
     estimatedMinutes: 1,
     offsetMinutes: 1,
   },

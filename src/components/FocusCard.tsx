@@ -79,16 +79,12 @@ export default function FocusCard({
       </Text>
 
       {task.description ? (
-        <Text
-          variant="bodyMedium"
-          style={styles.description}
-          numberOfLines={2}
-        >
+        <Text variant="bodyMedium" style={styles.description}>
           {task.description}
         </Text>
       ) : null}
 
-      <Text variant="bodySmall" style={styles.rationale} numberOfLines={2}>
+      <Text variant="bodySmall" style={styles.rationale}>
         {rationale}
       </Text>
 

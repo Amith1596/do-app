@@ -27,12 +27,12 @@ export default function WelcomeModal({ visible, onDismiss, userName }: WelcomeMo
           </Text>
 
           <Text style={styles.philosophy}>
-            Every feature is grounded in behavioral science — designed to make starting easier and finishing feel natural.
+            Every feature is grounded in behavioral science, designed to make starting easier and finishing feel natural.
           </Text>
 
           <Text style={styles.body}>
             Try DO for just one week. Use it as your only task app. Your feedback would be
-            invaluable — this is a real behavioral experiment and every bit of input helps
+            invaluable. This is a real behavioral experiment and every bit of input helps
             make it better.
           </Text>
 

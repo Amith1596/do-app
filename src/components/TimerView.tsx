@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { StyleSheet, View, Pressable } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { palette, fonts, shadows } from '../theme';
+import { palette, fonts } from '../theme';
 import { TimerSession } from '../types';
 
 interface TimerViewProps {
@@ -74,21 +73,13 @@ export default function TimerView({ session, onDone, onAbandon }: TimerViewProps
 
   return (
     <View style={styles.container}>
-      {/* Back button — top left */}
-      <View style={styles.backRow}>
-        <Pressable onPress={onAbandon} style={styles.backButton}>
-          <MaterialCommunityIcons
-            name="chevron-left"
-            size={28}
-            color={palette.inkLight}
-          />
-          <Text style={styles.backText}>Back</Text>
-        </Pressable>
-      </View>
-
-      {/* Timer content — centered */}
+      {/* Timer content */}
       <View style={styles.timerArea}>
-        <Text variant="headlineSmall" style={styles.taskTitle}>
+        <Text variant="titleMedium" style={styles.motivational}>
+          You're on it! You guessed {session.estimatedMinutes} min. Let's see.
+        </Text>
+
+        <Text variant="bodyMedium" style={styles.taskTitle}>
           {session.taskTitle}
         </Text>
 
@@ -102,18 +93,23 @@ export default function TimerView({ session, onDone, onAbandon }: TimerViewProps
           </Text>
         )}
 
-        <Text variant="bodySmall" style={styles.estimate}>
-          your guess: {session.estimatedMinutes} min
-        </Text>
-
-        {/* Action buttons */}
+        {/* Action buttons — all three in one row */}
         <View style={styles.actionRow}>
+          <Button
+            mode="text"
+            onPress={onAbandon}
+            style={styles.cancelButton}
+            labelStyle={styles.cancelLabel}
+            compact
+          >
+            Cancel
+          </Button>
+
           {isPaused ? (
             <Button
               mode="contained-tonal"
               onPress={handleResume}
               style={styles.pauseButton}
-              icon="play"
               textColor={palette.sage}
               buttonColor={palette.sageSurface}
             >
@@ -124,7 +120,6 @@ export default function TimerView({ session, onDone, onAbandon }: TimerViewProps
               mode="contained-tonal"
               onPress={handlePause}
               style={styles.pauseButton}
-              icon="pause"
               textColor={palette.inkMedium}
               buttonColor={palette.sand}
             >
@@ -152,34 +147,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  backRow: {
-    paddingHorizontal: 8,
-    paddingTop: 8,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    paddingVertical: 8,
-    paddingRight: 16,
-  },
-  backText: {
-    color: palette.inkLight,
-    fontFamily: fonts.medium,
-    fontSize: 15,
-    marginLeft: 2,
-  },
   timerArea: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  taskTitle: {
+  motivational: {
     color: palette.inkDark,
     fontFamily: fonts.medium,
     textAlign: 'center',
-    marginBottom: 32,
+    marginBottom: 8,
     letterSpacing: -0.3,
+    paddingHorizontal: 32,
+  },
+  taskTitle: {
+    color: palette.inkLight,
+    textAlign: 'center',
+    marginBottom: 32,
     paddingHorizontal: 32,
   },
   timer: {
@@ -193,23 +177,28 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontFamily: fonts.bold,
   },
-  estimate: {
-    color: palette.inkFaint,
-    marginTop: 8,
-  },
   actionRow: {
     flexDirection: 'row',
-    gap: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
     marginTop: 40,
-    paddingHorizontal: 32,
+    paddingHorizontal: 24,
+  },
+  cancelButton: {
+    borderRadius: 28,
+  },
+  cancelLabel: {
+    color: palette.inkLight,
+    fontSize: 15,
   },
   pauseButton: {
     borderRadius: 28,
-    flex: 1,
+    paddingHorizontal: 8,
   },
   doneButton: {
     borderRadius: 28,
-    flex: 1,
+    paddingHorizontal: 8,
   },
   doneLabel: {
     fontSize: 16,
