@@ -23,16 +23,23 @@ export function getRecommendation(
   // 2. Energy-based filtering
   const candidates = filterByEnergy(incomplete, energy);
   if (candidates.length === 0) {
-    // Fallback: if energy filter is too restrictive, show any incomplete task
-    const fallback = scoreTasks(incomplete, goals, skippedIds, lastCompletedGoalId);
-    return fallback;
+    // No tasks match this energy level — return null so UI can suggest alternatives
+    return null;
   }
 
-  // 3. Score and return best
-  return scoreTasks(candidates, goals, skippedIds, lastCompletedGoalId);
+  // 3. Remove skipped tasks from candidates
+  const unskipped = candidates.filter((t) => !skippedIds.includes(t.id));
+
+  if (unskipped.length === 0) {
+    // All candidates skipped — loop back to best task (circular)
+    return scoreTasks(candidates, goals, [], lastCompletedGoalId);
+  }
+
+  // 4. Score and return best unskipped task
+  return scoreTasks(unskipped, goals, skippedIds, lastCompletedGoalId);
 }
 
-function filterByEnergy(tasks: Task[], energy: EnergyState): Task[] {
+export function filterByEnergy(tasks: Task[], energy: EnergyState): Task[] {
   switch (energy) {
     case 'low':
       // Only easy or short tasks (≤15 min). If no difficulty/time set, include it.
@@ -43,12 +50,15 @@ function filterByEnergy(tasks: Task[], energy: EnergyState): Task[] {
         return isEasy || isShort || hasNoMetadata;
       });
 
+    case 'steady':
+      // Moderate tasks: exclude hard tasks. Include easy, medium, and untagged.
+      return tasks.filter((t) => t.difficulty !== 'hard');
+
     case 'wired':
       // Prioritize hard/long tasks, but don't exclude easy ones
       // (We'll boost hard tasks in scoring instead of filtering)
       return tasks;
 
-    case 'steady':
     default:
       return tasks;
   }
@@ -143,6 +153,21 @@ function scoreTasks(
     : 'Ready when you are';
 
   return { task: best.task, rationale, score: best.score };
+}
+
+/**
+ * Returns the number of available (incomplete) tasks per energy level.
+ * Used by FocusScreen to suggest alternative energy levels when no tasks match.
+ */
+export function getEnergyAvailability(
+  tasks: Task[]
+): Record<EnergyState, number> {
+  const incomplete = tasks.filter((t) => !t.completed);
+  return {
+    low: filterByEnergy(incomplete, 'low').length,
+    steady: filterByEnergy(incomplete, 'steady').length,
+    wired: filterByEnergy(incomplete, 'wired').length,
+  };
 }
 
 /**
