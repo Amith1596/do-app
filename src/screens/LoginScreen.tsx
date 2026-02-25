@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { Text, TextInput, Button, HelperText, useTheme } from 'react-native-paper';
 import { useAuth } from '../contexts/AuthContext';
 import { palette, fonts } from '../theme';
@@ -51,10 +51,11 @@ export default function LoginScreen({ navigation }: any) {
       <View style={styles.content}>
         {/* Branding */}
         <View style={styles.brandSection}>
-          <Text variant="displaySmall" style={[styles.appName, { color: palette.inkDark }]}>
-            <Text style={styles.appNameStrike}>TO</Text>
-            {' '}DO
-          </Text>
+          <Image
+            source={require('../../assets/icon.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
           <Text variant="bodyLarge" style={[styles.tagline, { color: palette.inkLight }]}>
             Don't organize tasks. Finish them.
           </Text>
@@ -149,15 +150,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 40,
   },
-  appName: {
-    fontFamily: fonts.bold,
-    fontSize: 56,
-    letterSpacing: 8,
-    marginBottom: 12,
-  },
-  appNameStrike: {
-    textDecorationLine: 'line-through' as const,
-    color: palette.inkLight,
+  logo: {
+    width: 120,
+    height: 120,
+    borderRadius: 24,
+    marginBottom: 16,
   },
   tagline: {
     textAlign: 'center',

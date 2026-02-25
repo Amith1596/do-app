@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ActivityIndicator } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 
 import { useAuth } from '../contexts/AuthContext';
 import { palette, fonts, shadows } from '../theme';
@@ -66,7 +66,13 @@ function MainTabs() {
         name="Focus"
         component={FocusScreen}
         options={{
-          headerTitle: 'DO',
+          headerTitle: () => (
+            <Image
+              source={require('../../assets/icon.png')}
+              style={styles.headerLogo}
+              resizeMode="contain"
+            />
+          ),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="lightning-bolt" size={size} color={color} />
           ),
@@ -140,5 +146,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  headerLogo: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
   },
 });

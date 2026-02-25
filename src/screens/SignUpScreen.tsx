@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Image } from 'react-native';
 import { Text, TextInput, Button, HelperText, useTheme } from 'react-native-paper';
 import { useAuth } from '../contexts/AuthContext';
 import { palette, fonts } from '../theme';
@@ -52,12 +52,19 @@ export default function SignUpScreen({ navigation }: any) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView contentContainerStyle={styles.content}>
-        <Text variant="displaySmall" style={[styles.title, { color: palette.inkDark }]}>
-          Join DO
-        </Text>
-        <Text variant="bodyLarge" style={[styles.subtitle, { color: palette.inkLight }]}>
-          Don't organize tasks. Finish them.
-        </Text>
+        <View style={styles.brandSection}>
+          <Image
+            source={require('../../assets/icon.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text variant="displaySmall" style={[styles.title, { color: palette.inkDark }]}>
+            Join DO
+          </Text>
+          <Text variant="bodyLarge" style={[styles.subtitle, { color: palette.inkLight }]}>
+            Don't organize tasks. Finish them.
+          </Text>
+        </View>
 
         <TextInput
           label="Name (Optional)"
@@ -157,6 +164,16 @@ const styles = StyleSheet.create({
     padding: 32,
     justifyContent: 'center',
   },
+  brandSection: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  logo: {
+    width: 80,
+    height: 80,
+    borderRadius: 18,
+    marginBottom: 12,
+  },
   title: {
     marginBottom: 8,
     textAlign: 'center',
@@ -164,7 +181,6 @@ const styles = StyleSheet.create({
     letterSpacing: 4,
   },
   subtitle: {
-    marginBottom: 32,
     textAlign: 'center',
     letterSpacing: 0.5,
   },
