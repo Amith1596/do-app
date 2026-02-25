@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useTasks } from '../contexts/TasksContext';
 import { useGoals } from '../contexts/GoalsContext';
 import { EnergyState, TaskRecommendation, TimerSession } from '../types';
-import { getRecommendation } from '../utils/recommendations';
+import { getRecommendation, filterByEnergy, getEnergyAvailability } from '../utils/recommendations';
 import { calculateMomentum } from '../utils/momentum';
 import { palette, fonts } from '../theme';
 import EnergySelector from '../components/EnergySelector';
@@ -90,6 +90,11 @@ export default function FocusScreen() {
     return getRecommendation(tasks, goals, energy, skippedIds, lastCompletedGoalId);
   }, [tasks, goals, energy, skippedIds, lastCompletedGoalId]);
 
+  const energyAvailability = useMemo(() => {
+    if (!energy) return null;
+    return getEnergyAvailability(tasks);
+  }, [tasks, energy]);
+
   const recommendedGoalName = useMemo(() => {
     if (!recommendation?.task.goalId) return undefined;
     return goals.find((g) => g.id === recommendation.task.goalId)?.title;
@@ -102,10 +107,24 @@ export default function FocusScreen() {
   }, []);
 
   const handleNotThis = useCallback(() => {
-    if (!recommendation) return;
-    setSkippedIds((prev) => [...prev, recommendation.task.id]);
-    setSkipCount((prev) => prev + 1);
-  }, [recommendation]);
+    if (!recommendation || !energy) return;
+    const newSkippedIds = [...skippedIds, recommendation.task.id];
+
+    // Check if all available tasks at this energy level have been skipped
+    const incomplete = tasks.filter((t) => !t.completed);
+    const candidates = filterByEnergy(incomplete, energy);
+    const available = candidates.length > 0 ? candidates : incomplete;
+    const allSkipped = available.every((t) => newSkippedIds.includes(t.id));
+
+    if (allSkipped) {
+      // Circular loop: reset so recommendations start fresh from #1
+      setSkippedIds([]);
+      setSkipCount(0);
+    } else {
+      setSkippedIds(newSkippedIds);
+      setSkipCount((prev) => prev + 1);
+    }
+  }, [recommendation, skippedIds, tasks, energy]);
 
   const handleDoIt = useCallback(() => {
     if (!recommendation) return;
@@ -234,9 +253,27 @@ export default function FocusScreen() {
                 <Text variant="titleLarge" style={styles.emptyTitle}>
                   Nothing matches right now
                 </Text>
-                <Text variant="bodyMedium" style={styles.emptySubtitle}>
-                  Try a different energy level, or add time estimates to your tasks.
-                </Text>
+                {energyAvailability && (() => {
+                  const alternatives = (['low', 'steady', 'wired'] as const)
+                    .filter((level) => level !== energy && energyAvailability[level] > 0);
+                  if (alternatives.length > 0) {
+                    const parts = alternatives.map((level) => {
+                      const count = energyAvailability[level];
+                      const label = level === 'low' ? 'Low' : level === 'steady' ? 'Steady' : 'Wired';
+                      return `${count} at ${label}`;
+                    });
+                    return (
+                      <Text variant="bodyMedium" style={styles.emptySubtitle}>
+                        You have {parts.join(' and ')} energy. Try switching.
+                      </Text>
+                    );
+                  }
+                  return (
+                    <Text variant="bodyMedium" style={styles.emptySubtitle}>
+                      Try adding time estimates or difficulty to your tasks.
+                    </Text>
+                  );
+                })()}
                 <Button
                   mode="outlined"
                   onPress={handleChangeEnergy}
