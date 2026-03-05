@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
-import { StyleSheet, Animated, ScrollView } from 'react-native';
+import { StyleSheet, Animated, ScrollView, useWindowDimensions, Platform } from 'react-native';
 import { View } from 'react-native';
 import { Text, FAB, Snackbar, Button, IconButton, Portal, Dialog } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
@@ -64,7 +64,7 @@ export default function FocusScreen() {
     ],
   });
 
-  // Sync header background with energy state
+  // Sync header background with energy state + add help icon
   useLayoutEffect(() => {
     const bgColor = energy ? ENERGY_BACKGROUNDS[energy] : palette.cream;
     navigation.setOptions({
@@ -73,8 +73,17 @@ export default function FocusScreen() {
         shadowColor: 'transparent',
         elevation: 0,
       },
+      headerRight: () => (
+        <IconButton
+          icon="help-circle-outline"
+          size={22}
+          iconColor={palette.inkLight}
+          onPress={() => setHelpVisible(true)}
+          style={{ marginRight: 4 }}
+        />
+      ),
     });
-  }, [energy, navigation]);
+  }, [energy, navigation, helpVisible]);
 
   const momentum = useMemo(() => calculateMomentum(tasks), [tasks]);
 
@@ -184,17 +193,12 @@ export default function FocusScreen() {
   // --- Focus view content ---
   const allDone = tasks.filter((t) => !t.completed).length === 0;
   const noTasks = tasks.length === 0;
+  const { width: screenWidth } = useWindowDimensions();
+  const isWideScreen = screenWidth > 600;
 
   return (
     <Animated.View style={[styles.container, { backgroundColor: animatedBg }]}>
-      {/* Help icon */}
-      <IconButton
-        icon="help-circle-outline"
-        size={22}
-        iconColor={palette.inkLight}
-        onPress={() => setHelpVisible(true)}
-        style={styles.helpButton}
-      />
+      {/* Help icon is rendered in header via navigation options */}
 
       {timerSession ? (
         <TimerView
@@ -325,36 +329,88 @@ export default function FocusScreen() {
           onDismiss={() => setHelpVisible(false)}
           style={styles.helpDialog}
         >
-          <Dialog.Title style={styles.helpDialogTitle}>How DO Works</Dialog.Title>
-          <Dialog.Content>
-            <View style={styles.helpItem}>
-              <Text variant="titleSmall" style={styles.helpItemTitle}>One task at a time</Text>
-              <Text variant="bodyMedium" style={styles.helpItemBody}>
-                DO shows you a single task matched to your current energy. No scrolling, no overwhelm.
-              </Text>
-            </View>
-            <View style={styles.helpItem}>
-              <Text variant="titleSmall" style={styles.helpItemTitle}>Energy levels</Text>
-              <Text variant="bodyMedium" style={styles.helpItemBody}>
-                Your energy filters what gets recommended. Low energy gets easier tasks. Wired gets the challenging ones.
-              </Text>
-            </View>
-            <View style={styles.helpItem}>
-              <Text variant="titleSmall" style={styles.helpItemTitle}>Momentum</Text>
-              <Text variant="bodyMedium" style={styles.helpItemBody}>
-                Tracks your 7-day rolling completions. It never resets to zero. Every task counts.
-              </Text>
-            </View>
-            <View style={styles.helpItemLast}>
-              <Text variant="titleSmall" style={styles.helpItemTitle}>No streaks, no shame</Text>
-              <Text variant="bodyMedium" style={styles.helpItemBody}>
-                Missed a day? That's fine. DO measures forward motion, not perfection.
-              </Text>
-            </View>
-          </Dialog.Content>
+          <Dialog.Title style={styles.helpDialogTitle}>Guide & FAQ</Dialog.Title>
+          <Dialog.ScrollArea style={{ paddingHorizontal: 0 }}>
+            <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 8 }}>
+              {/* Getting Started */}
+              <Text variant="titleSmall" style={styles.helpSectionHeader}>Getting Started</Text>
+              <View style={styles.helpItem}>
+                <Text variant="titleSmall" style={styles.helpItemTitle}>1. Set your energy</Text>
+                <Text variant="bodyMedium" style={styles.helpItemBody}>
+                  Pick Low, Steady, or Wired. This filters which tasks get recommended to you.
+                </Text>
+              </View>
+              <View style={styles.helpItem}>
+                <Text variant="titleSmall" style={styles.helpItemTitle}>2. See your task</Text>
+                <Text variant="bodyMedium" style={styles.helpItemBody}>
+                  DO picks one task based on your energy, difficulty, and priority. Tap "Do it" to start the timer, or "Not this" to see the next option.
+                </Text>
+              </View>
+              <View style={styles.helpItem}>
+                <Text variant="titleSmall" style={styles.helpItemTitle}>3. Complete with the timer</Text>
+                <Text variant="bodyMedium" style={styles.helpItemBody}>
+                  The timer tracks how long you actually spend. After you finish, you'll see how your estimate compared. This builds better time awareness over use.
+                </Text>
+              </View>
+
+              {/* Features */}
+              <Text variant="titleSmall" style={styles.helpSectionHeader}>Features</Text>
+              <View style={styles.helpItem}>
+                <Text variant="titleSmall" style={styles.helpItemTitle}>Energy matching</Text>
+                <Text variant="bodyMedium" style={styles.helpItemBody}>
+                  Low energy surfaces easier, shorter tasks. Wired surfaces harder, longer ones. Steady is in between. You can change energy at any time.
+                </Text>
+              </View>
+              <View style={styles.helpItem}>
+                <Text variant="titleSmall" style={styles.helpItemTitle}>Momentum meter</Text>
+                <Text variant="bodyMedium" style={styles.helpItemBody}>
+                  The bar at the top shows your rolling 7-day task completions. It never resets to zero. Even one task counts.
+                </Text>
+              </View>
+              <View style={styles.helpItem}>
+                <Text variant="titleSmall" style={styles.helpItemTitle}>Goals & progress</Text>
+                <Text variant="bodyMedium" style={styles.helpItemBody}>
+                  Link tasks to goals in the Goals tab. Progress bars update as you complete linked tasks.
+                </Text>
+              </View>
+              <View style={styles.helpItem}>
+                <Text variant="titleSmall" style={styles.helpItemTitle}>Sub-tasks</Text>
+                <Text variant="bodyMedium" style={styles.helpItemBody}>
+                  Break big tasks into smaller steps. Sub-tasks inherit the parent's goal and can have their own energy and difficulty.
+                </Text>
+              </View>
+
+              {/* FAQ */}
+              <Text variant="titleSmall" style={styles.helpSectionHeader}>FAQ</Text>
+              <View style={styles.helpItem}>
+                <Text variant="titleSmall" style={styles.helpItemTitle}>Where is my task list?</Text>
+                <Text variant="bodyMedium" style={styles.helpItemBody}>
+                  The Tasks tab shows all your tasks if you need to browse. Focus mode is the default because picking from a list causes decision fatigue.
+                </Text>
+              </View>
+              <View style={styles.helpItem}>
+                <Text variant="titleSmall" style={styles.helpItemTitle}>What does "Not this" do?</Text>
+                <Text variant="bodyMedium" style={styles.helpItemBody}>
+                  It skips to the next recommendation. After skipping all available tasks, the cycle resets. Skip count is tracked to help the algorithm learn.
+                </Text>
+              </View>
+              <View style={styles.helpItem}>
+                <Text variant="titleSmall" style={styles.helpItemTitle}>Can I add tasks from this screen?</Text>
+                <Text variant="bodyMedium" style={styles.helpItemBody}>
+                  Yes. Tap the + button in the bottom right corner.
+                </Text>
+              </View>
+              <View style={styles.helpItemLast}>
+                <Text variant="titleSmall" style={styles.helpItemTitle}>I abandoned a timer. Is the task lost?</Text>
+                <Text variant="bodyMedium" style={styles.helpItemBody}>
+                  No. Abandoning returns you to recommendations. The task stays incomplete and will show up again.
+                </Text>
+              </View>
+            </ScrollView>
+          </Dialog.ScrollArea>
           <Dialog.Actions>
             <Button onPress={() => setHelpVisible(false)} textColor={palette.sage}>
-              Got it
+              Close
             </Button>
           </Dialog.Actions>
         </Dialog>
@@ -446,19 +502,23 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase' as const,
     fontSize: 11,
   },
-  helpButton: {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-    zIndex: 10,
-  },
   helpDialog: {
     backgroundColor: palette.warmWhite,
     borderRadius: 20,
+    maxHeight: '80%',
   },
   helpDialogTitle: {
     fontFamily: fonts.bold,
     color: palette.inkDark,
+  },
+  helpSectionHeader: {
+    color: palette.sage,
+    fontFamily: fonts.bold,
+    fontSize: 13,
+    letterSpacing: 1,
+    textTransform: 'uppercase' as const,
+    marginTop: 16,
+    marginBottom: 12,
   },
   helpItem: {
     marginBottom: 16,

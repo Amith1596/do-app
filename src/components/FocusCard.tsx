@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+import { View, StyleSheet, Animated, useWindowDimensions } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { TaskRecommendation } from '../types';
 import { palette, fonts, shadows } from '../theme';
@@ -26,6 +26,8 @@ export default function FocusCard({
 }: FocusCardProps) {
   const { task, rationale } = recommendation;
   const { opacity, translateY } = useEntranceAnimation(task.id);
+  const { width: screenWidth } = useWindowDimensions();
+  const cardMaxWidth = Math.min(screenWidth - 40, 420);
 
   const badges: React.ReactNode[] = [];
 
@@ -67,6 +69,9 @@ export default function FocusCard({
         {
           opacity,
           transform: [{ translateY }],
+          maxWidth: cardMaxWidth,
+          alignSelf: 'center',
+          width: '100%',
         },
       ]}
     >
@@ -118,7 +123,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     borderRadius: 24,
     backgroundColor: palette.warmWhite,
-    padding: 24,
+    paddingHorizontal: 28,
+    paddingVertical: 32,
     ...shadows.lifted,
   },
   badgeRow: {
@@ -142,24 +148,25 @@ const styles = StyleSheet.create({
     color: palette.inkDark,
     fontFamily: fonts.bold,
     textAlign: 'center',
-    marginVertical: 16,
+    marginVertical: 20,
     letterSpacing: -0.5,
   },
   description: {
-    color: palette.inkLight,
+    color: palette.inkMedium,
     textAlign: 'center',
+    lineHeight: 22,
   },
   rationale: {
-    color: palette.inkFaint,
+    color: palette.inkLight,
     fontStyle: 'italic',
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: 12,
     fontFamily: fonts.regular,
   },
   buttonRow: {
     flexDirection: 'row',
     gap: 12,
-    marginTop: 28,
+    marginTop: 32,
   },
   buttonNotThis: {
     flex: 1,
