@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
 import { StyleSheet, Animated, ScrollView } from 'react-native';
 import { View } from 'react-native';
-import { Text, FAB, Snackbar, Button } from 'react-native-paper';
+import { Text, FAB, Snackbar, Button, IconButton, Portal, Dialog } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { useTasks } from '../contexts/TasksContext';
 import { useGoals } from '../contexts/GoalsContext';
@@ -37,6 +37,7 @@ export default function FocusScreen() {
   const [timerSession, setTimerSession] = useState<TimerSession | null>(null);
   const [timeComparison, setTimeComparison] = useState<string | null>(null);
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const [helpVisible, setHelpVisible] = useState(false);
 
   const navigation = useNavigation();
   const { tasks, toggleTask, updateTask, celebrationMessage, clearCelebration } = useTasks();
@@ -186,6 +187,15 @@ export default function FocusScreen() {
 
   return (
     <Animated.View style={[styles.container, { backgroundColor: animatedBg }]}>
+      {/* Help icon */}
+      <IconButton
+        icon="help-circle-outline"
+        size={22}
+        iconColor={palette.inkLight}
+        onPress={() => setHelpVisible(true)}
+        style={styles.helpButton}
+      />
+
       {timerSession ? (
         <TimerView
           session={timerSession}
@@ -308,6 +318,48 @@ export default function FocusScreen() {
         onDismiss={() => setAddModalVisible(false)}
       />
 
+      {/* Help dialog */}
+      <Portal>
+        <Dialog
+          visible={helpVisible}
+          onDismiss={() => setHelpVisible(false)}
+          style={styles.helpDialog}
+        >
+          <Dialog.Title style={styles.helpDialogTitle}>How DO Works</Dialog.Title>
+          <Dialog.Content>
+            <View style={styles.helpItem}>
+              <Text variant="titleSmall" style={styles.helpItemTitle}>One task at a time</Text>
+              <Text variant="bodyMedium" style={styles.helpItemBody}>
+                DO shows you a single task matched to your current energy. No scrolling, no overwhelm.
+              </Text>
+            </View>
+            <View style={styles.helpItem}>
+              <Text variant="titleSmall" style={styles.helpItemTitle}>Energy levels</Text>
+              <Text variant="bodyMedium" style={styles.helpItemBody}>
+                Your energy filters what gets recommended. Low energy gets easier tasks. Wired gets the challenging ones.
+              </Text>
+            </View>
+            <View style={styles.helpItem}>
+              <Text variant="titleSmall" style={styles.helpItemTitle}>Momentum</Text>
+              <Text variant="bodyMedium" style={styles.helpItemBody}>
+                Tracks your 7-day rolling completions. It never resets to zero. Every task counts.
+              </Text>
+            </View>
+            <View style={styles.helpItemLast}>
+              <Text variant="titleSmall" style={styles.helpItemTitle}>No streaks, no shame</Text>
+              <Text variant="bodyMedium" style={styles.helpItemBody}>
+                Missed a day? That's fine. DO measures forward motion, not perfection.
+              </Text>
+            </View>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setHelpVisible(false)} textColor={palette.sage}>
+              Got it
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
       {/* Celebration snackbar */}
       <Snackbar
         visible={!!celebrationMessage}
@@ -393,6 +445,35 @@ const styles = StyleSheet.create({
     fontFamily: fonts.medium,
     textTransform: 'uppercase' as const,
     fontSize: 11,
+  },
+  helpButton: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    zIndex: 10,
+  },
+  helpDialog: {
+    backgroundColor: palette.warmWhite,
+    borderRadius: 20,
+  },
+  helpDialogTitle: {
+    fontFamily: fonts.bold,
+    color: palette.inkDark,
+  },
+  helpItem: {
+    marginBottom: 16,
+  },
+  helpItemLast: {
+    marginBottom: 0,
+  },
+  helpItemTitle: {
+    color: palette.inkDark,
+    fontFamily: fonts.medium,
+    marginBottom: 4,
+  },
+  helpItemBody: {
+    color: palette.inkMedium,
+    lineHeight: 22,
   },
   fab: {
     position: 'absolute',
