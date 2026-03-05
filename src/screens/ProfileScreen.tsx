@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, Platform } from 'react-native';
-import { Text, Button, Surface, TextInput, HelperText } from 'react-native-paper';
+import { Text, Button, Surface, TextInput, HelperText, Portal, Dialog, Snackbar } from 'react-native-paper';
 import { useAuth } from '../contexts/AuthContext';
 import { palette, fonts, shadows } from '../theme';
 import PWAInstallModal from '../components/PWAInstallModal';
@@ -8,6 +8,11 @@ import PWAInstallModal from '../components/PWAInstallModal';
 export default function ProfileScreen() {
   const { signOut, session, isGuest, convertGuest } = useAuth();
   const [pwaModalVisible, setPwaModalVisible] = useState(false);
+
+  // Feedback dialog state
+  const [feedbackVisible, setFeedbackVisible] = useState(false);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [feedbackSnackVisible, setFeedbackSnackVisible] = useState(false);
 
   // Guest conversion form state
   const [showForm, setShowForm] = useState(false);
@@ -46,6 +51,12 @@ export default function ProfileScreen() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFeedbackSubmit = () => {
+    setFeedbackVisible(false);
+    setFeedbackText('');
+    setFeedbackSnackVisible(true);
   };
 
   return (
@@ -207,6 +218,17 @@ export default function ProfileScreen() {
       )}
 
       <Button
+        mode="contained-tonal"
+        onPress={() => setFeedbackVisible(true)}
+        style={styles.feedbackButton}
+        icon="message-text-outline"
+        buttonColor={palette.sageSurface}
+        textColor={palette.sageDark}
+      >
+        Share Feedback
+      </Button>
+
+      <Button
         mode="outlined"
         onPress={signOut}
         style={styles.signOutButton}
@@ -215,10 +237,56 @@ export default function ProfileScreen() {
         {isGuest ? 'Exit Guest Mode' : 'Sign Out'}
       </Button>
 
+      <Portal>
+        <Dialog
+          visible={feedbackVisible}
+          onDismiss={() => setFeedbackVisible(false)}
+          style={styles.feedbackDialog}
+        >
+          <Dialog.Title style={styles.feedbackDialogTitle}>Share Feedback</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium" style={styles.feedbackPrompt}>
+              What's working? What could be better? We'd love to hear from you.
+            </Text>
+            <TextInput
+              label="Your feedback"
+              value={feedbackText}
+              onChangeText={setFeedbackText}
+              mode="outlined"
+              multiline
+              numberOfLines={4}
+              style={styles.feedbackInput}
+              outlineStyle={styles.inputOutline}
+            />
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setFeedbackVisible(false)} textColor={palette.inkLight}>
+              Cancel
+            </Button>
+            <Button
+              onPress={handleFeedbackSubmit}
+              disabled={!feedbackText.trim()}
+              textColor={palette.sage}
+            >
+              Submit
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
       <PWAInstallModal
         visible={pwaModalVisible}
         onDismiss={() => setPwaModalVisible(false)}
       />
+
+      <Snackbar
+        visible={feedbackSnackVisible}
+        onDismiss={() => setFeedbackSnackVisible(false)}
+        duration={3000}
+        style={styles.feedbackSnackbar}
+      >
+        Thanks! We'll review this.
+      </Snackbar>
     </ScrollView>
   );
 }
@@ -306,8 +374,33 @@ const styles = StyleSheet.create({
     color: palette.inkMedium,
     lineHeight: 22,
   },
-  pwaButton: {
+  feedbackButton: {
     marginTop: 24,
+    borderRadius: 20,
+  },
+  feedbackDialog: {
+    backgroundColor: palette.warmWhite,
+    borderRadius: 20,
+  },
+  feedbackDialogTitle: {
+    fontFamily: fonts.bold,
+    color: palette.inkDark,
+  },
+  feedbackPrompt: {
+    color: palette.inkMedium,
+    marginBottom: 16,
+    lineHeight: 22,
+  },
+  feedbackInput: {
+    backgroundColor: 'transparent',
+  },
+  feedbackSnackbar: {
+    backgroundColor: palette.sageDark,
+    borderRadius: 12,
+    marginHorizontal: 16,
+  },
+  pwaButton: {
+    marginTop: 12,
     borderRadius: 20,
   },
   signOutButton: {
