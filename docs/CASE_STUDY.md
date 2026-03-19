@@ -1,491 +1,155 @@
-# Designing a Behavioral Science-Powered Todo App
+# DO: A Behavioral Science Todo App
 
-**Project**: Behavioral Todo App
+**Project**: DO (anti-list task app)
 **Role**: Product Designer & Developer
 **Timeline**: November 2025 - Present
-**Status**: Phase 1 Design Complete (85% implementation)
+**Status**: Phase 1.5 complete, deployed at [do-app.vercel.app](https://do-app.vercel.app)
+**Repo**: [github.com/Amith1596/do-app](https://github.com/Amith1596/do-app)
 
 ---
 
 ## The Problem: Todo Apps Don't Help You Complete Tasks
 
-I've tried every todo app: Todoist, Things, TickTick, Notion, Asana. They all do the same thing—**organize tasks**. They're glorified lists with bells and whistles.
+Every todo app solves organization. None solve completion.
 
-But none of them actually help you **complete** those tasks.
+You open Todoist. You see 30 tasks. You feel overwhelmed. You close Todoist. You open Instagram instead.
 
-The result? People create beautifully organized lists of things they never do. The app becomes a museum of abandoned intentions—a guilt-inducing reminder of everything they're not accomplishing.
+The list is the problem. Lists create decision fatigue, trigger overwhelm, and enable avoidance. The more organized your list, the more paralyzing it becomes.
 
-**The core insight**: Task completion isn't a problem of organization. It's a problem of **motivation, ability, and prompting**—the three components of BJ Fogg's Behavior Model.
+**The core insight**: Task completion isn't a problem of organization. It's a problem of **motivation, ability, and prompting**, the three components of BJ Fogg's Behavior Model (B=MAP).
 
-Traditional todo apps only address organization (a proxy for ability). They completely ignore motivation and prompting, the two factors that actually drive behavior change.
-
-I set out to design a todo app that applies behavioral science to every interaction—from task creation to completion—to maximize the likelihood that tasks actually get done.
+Traditional todo apps only address organization (a proxy for ability). They ignore motivation and prompting, the two factors that actually drive behavior change.
 
 ---
 
-## Framework: BJ Fogg's Behavior Model
+## What's Built and Shipping
 
-**B = MAP**
+DO is a working React Native + Expo app deployed on the web. These features are live and usable today.
 
-Behavior happens when three elements converge at the same moment:
-1. **Motivation** (the desire to do something)
-2. **Ability** (the capacity to do it)
-3. **Prompt** (a trigger to do it now)
+### 1. One Task at a Time (Focus Screen)
 
-If any element is missing, the behavior won't occur. Most people blame lack of motivation, but Fogg's research shows that **ability is the most reliable lever**. It's easier to make a task tiny than to sustain high motivation.
+**Problem**: Choice overload causes decision paralysis. More options = more friction = less action.
 
-### How I Applied B=MAP to Todo App Design
+**Research**: Hick's Law shows reaction time increases logarithmically with the number of choices. Sheena Iyengar's jam study showed 24 options led to 1/10th the purchases of 6 options. BJ Fogg's Ability axis in B=MAP says reducing decision friction directly increases the likelihood of behavior.
 
-**Motivation Features**:
-- Goal-aligned progress visualization (see impact in real-time)
-- Micro-milestones and celebration triggers (dopamine hits for small wins)
-- Social accountability witnesses (others see your progress without micromanaging)
+**What we built**: The Focus screen shows a single task card, not a list. A recommendation engine scores every task and surfaces the best one for right now. You see "Do it" or "Not this", two choices instead of thirty.
 
-**Ability Features**:
-- Smart Calendar Tetris (AI finds optimal time slots based on your energy patterns)
-- "I Have 15 Minutes" contextual recommendations (match tasks to available time/context)
-- Adaptive difficulty (tasks automatically adjust based on your success rate)
-- Dependency intelligence (surface "unblocking" tasks that enable the most downstream work)
+### 2. Energy Matching (Low / Steady / Wired)
 
-**Prompt Features**:
-- Psychological reframing (reminders optimized using loss aversion, identity framing, social pressure)
-- Context-locked Implementation Intentions (sensor-based anchor detection: "When X happens, I will Y")
-- Predictive failure warnings (ML predicts task failure before it happens)
+**Problem**: Todo apps treat you as a constant. Same list at 9am and 9pm, whether you slept 8 hours or 4.
 
----
+**Research**: BJ Fogg's B=MAP says when energy is low, Ability drops. Instead of trying to boost motivation (hard), match the task to current ability (easy). Low energy + easy task = behavior happens.
 
-## 15+ Unique Features Designed
+**What we built**: App opens with "How's your energy?" (Low / Steady / Wired). The recommendation engine filters by energy state. At Low, only easy or short tasks (15 min or less) are eligible. At Wired, hard tasks get boosted. The same task list produces different recommendations at different times of day.
 
-I documented over 15 behavioral science-backed features in [FEATURE_CONCEPTS.md](./FEATURE_CONCEPTS.md). Here are the most differentiated:
+### 3. Momentum Meter (Never Resets to Zero)
 
-### 1. Smart Calendar Tetris
+**Problem**: Streaks are punitive. Miss one day on a 30-day streak and it resets to zero. This triggers the "what-the-hell effect" where one slip makes people abandon the entire system.
 
-**The Problem**: People don't fail because they're lazy. They fail because they schedule hard tasks when their energy is low.
+**Research**: The what-the-hell effect (Cochran & Tesser, 1996). Counter-evidence: systems with gradual decay preserve motivation after setbacks.
 
-**The Solution**: AI analyzes your calendar, productivity patterns, and energy levels to find the optimal time slot for each task.
+**What we built**: A 7-day rolling momentum meter. Complete tasks and momentum builds. Miss a day and it decays slightly, but never resets. Levels go from "Getting started" through "Building nicely" to "Unstoppable." Coming back after a week off, you're at "Ready to start," not "You broke your streak."
 
-**How It Works**:
-- Tracks when you complete tasks (morning person? night owl?)
-- Monitors meeting density (you have less energy after back-to-back meetings)
-- Learns task-energy alignment (coding requires deep focus, emails don't)
-- Automatically suggests: "Best time for this task: Tomorrow, 9-11am (your peak focus window)"
+### 4. Time Perception Training
 
-**Behavioral Science**: Energy-task matching increases completion rates by reducing cognitive load at the wrong times.
+**Problem**: Time blindness, the inability to accurately estimate how long things take.
 
-**Why This Matters**: No other todo app does this. They all assume you have infinite willpower. You don't.
+**Research**: Dr. Russell Barkley identifies time blindness as a core executive function deficit in ADHD. Repeated estimation with immediate feedback is one of the few interventions shown to improve time perception.
 
----
+**What we built**: Every task has a time estimate. When you tap "Do it," a timer starts. When you finish, the app compares your estimate to actual time with shame-free language: "You guessed 5 min, took 12 min. That's common, your estimates will get better" or "Faster than you thought!"
 
-### 2. "I Have 15 Minutes" Contextual Recommender
+### 5. Shame-Free Language
 
-**The Problem**: You open your todo app with 15 minutes free and see 47 tasks. Analysis paralysis kicks in. You close the app and scroll Twitter instead.
+**Problem**: Todo apps weaponize guilt. Red "overdue" badges, broken streak warnings, aggressive reminders. This builds what ADHD coach Brendan Mahan calls the "Wall of Awful," accumulated negative emotions that make starting harder the longer you avoid it.
 
-**The Solution**: One button: "I have 15 minutes." The app instantly recommends the single best task for RIGHT NOW based on:
-- Time available
-- Current location (home, office, commute)
-- Current energy level (fresh vs depleted)
-- Task dependencies (what's blocking other work?)
-- Upcoming deadlines
+**Research**: Kristin Neff's self-compassion research shows that self-compassion consistently outperforms self-criticism for sustained behavior change. People who forgive themselves for procrastinating are less likely to procrastinate next time (Wohl, Pychyl, & Bennett, 2010).
 
-**Example**:
-- 15 minutes, at coffee shop, medium energy → "Review Sarah's presentation (12 min estimated)"
-- 15 minutes, on train, low energy → "Respond to 3 easy emails"
-- 15 minutes, at home, high energy → "Outline blog post intro"
+**What we built**: Zero guilt language anywhere. Old tasks are "Been waiting patiently," not "overdue." The empty state says "Nothing right now. Enjoy the quiet. You've earned it." A guest returning after weeks sees "A clean slate," not a wall of shame.
 
-**Behavioral Science**: Reduces decision fatigue (major cause of procrastination) and leverages Implementation Intentions ("When I have 15 minutes, I will do the recommended task").
+### 6. Completion Celebrations
 
-**Why This Matters**: Eliminates the "I don't know what to work on" excuse.
+**Problem**: Traditional todo apps give you a checkbox. No emotional reinforcement.
+
+**Research**: BJ Fogg's "Celebration" is the most underrated part of his model. Immediate positive emotion right after a behavior is what wires the habit loop. Dopamine reinforcement happens in milliseconds.
+
+**What we built**: Every completion triggers a contextual celebration message + haptic feedback. High-priority task? "Big one knocked out! That took guts." Task linked to a goal? "Done! You're now 60% through 'Launch portfolio'." The message matches the significance of what you just did.
+
+### 7. Context Batching
+
+**Problem**: Bouncing between unrelated tasks kills flow state.
+
+**Research**: Gollwitzer's implementation intentions research (2006) found pre-committing to context-specific actions doubles follow-through. Task inertia: you're more likely to continue in a domain you just completed something in.
+
+**What we built**: After completing a task linked to a goal, the recommendation engine boosts other tasks under the same goal. Finish one task toward "Learn Spanish"? The next recommendation is more likely to be another Spanish task.
+
+### 8. Onboarding Through the Product
+
+**Problem**: Traditional onboarding (modals, tooltips) teaches you about the app. People learn by doing, not by reading.
+
+**Research**: BJ Fogg's Tiny Habits: start with the smallest possible version of the target behavior.
+
+**What we built**: When a guest taps "Try the Experience," 5 seed tasks are created. Each one teaches a feature by making you use it. Task 1: "Welcome to DO. Tap 'Do it' below." No modals, no overlays. The product teaches itself through its own core loop.
 
 ---
 
-### 3. Psychological Reframing Engine
+## What's Designed but Not Built
 
-**The Problem**: Generic reminders are easy to ignore. "Go to gym" becomes background noise.
+These features were designed with full behavioral science rationale and documented in [FEATURE_CONCEPTS.md](./FEATURE_CONCEPTS.md). They represent the Phase 2-4 roadmap.
 
-**The Solution**: AI rewrites task reminders using persuasion psychology—loss aversion, identity framing, social pressure, anticipated regret.
+- **Brain Dump** (Phase 2): AI-powered task capture. Stream-of-consciousness text input, structured tasks extracted by Claude API, smart re-planning, intelligent decomposition. Full spec in [PRD.md](../PRD.md).
+- **Smart Calendar Tetris**: AI analyzes calendar, productivity patterns, and energy levels to find optimal time slots.
+- **Psychological Reframing Engine**: AI rewrites reminders using loss aversion, identity framing, and social pressure. User-controlled intensity.
+- **Predictive Failure Warnings**: ML model predicts task failure 3-5 days in advance based on historical patterns.
+- **Social Goal Witnesses**: Designate people who see goal progress updates without seeing your task list.
+- **Implementation Intentions with Sensor Detection**: Context-locked habits using phone sensors ("When I arrive home, I will change into workout clothes").
+- **Task Dependency Intelligence**: Surface "unblocking" tasks that enable the most downstream work.
 
-**Examples**:
-
-| Original Task | Reframed Reminder (Loss Aversion) |
-|--------------|-----------------------------------|
-| "Go to gym" | "You're losing 1 of 7 chances this week to protect your health. 6 left." |
-| "Call mom" | "Another day your mom won't hear from you. She won't be around forever." |
-| "Review presentation" | "Every hour you delay, your confidence drops. Present unprepared or fix it now?" |
-
-| Original Task | Reframed Reminder (Identity) |
-|--------------|------------------------------|
-| "Go to gym" | "Athletes train even when they don't feel like it. Are you an athlete?" |
-| "Work on side project" | "Builders build. Dreamers plan. Which one are you today?" |
-
-**Adaptive Intensity**: User sets tolerance from "Gentle nudges" → "Maximum pressure." AI learns which frameworks work best for each person.
-
-**Escalation Protocol**: If you ignore a reminder repeatedly, it escalates:
-1. Attempt 1: "30 minutes on your resume unlocks opportunities"
-2. Attempt 3: "Every day without a polished resume is a day someone else gets your job"
-3. Attempt 5: "Fine. Stay in your current job. Your future self will understand."
-
-**Behavioral Science**: Losses feel 2x stronger than gains. Identity-consistent behavior is sticky. Social pressure works even when imaginary.
-
-**Ethical Safeguards**: Users control intensity. Can pause aggressive reminders. AI doesn't target vulnerable mental states.
-
-**Why This Matters**: This is borderline dark psychology applied to helping you, not manipulating you. No other productivity app does this.
+These are genuine design bets, not features. The gap between designed and built is intentional. Ship 3-5 core differentiators, get users, learn what matters, kill 80% of the backlog.
 
 ---
 
-### 4. Predictive Failure Warnings
+## Tech Stack
 
-**The Problem**: You realize you're going to miss a deadline when it's too late to fix it.
-
-**The Solution**: ML model predicts task failure 3-5 days in advance based on:
-- Your historical completion patterns
-- Task complexity vs time remaining
-- Current workload and energy trends
-- Similar tasks you've failed before
-
-**Example Alert**:
-```
-⚠️ High Failure Risk Detected
-Task: "Finish project proposal"
-Predicted outcome: 78% chance you won't finish by Friday
-
-Why:
-- You have 8 hours of work, but only 3 free hours scheduled
-- You've failed similar writing tasks when you start <5 days before deadline
-- Your calendar shows 6 meetings tomorrow (low focus time)
-
-Suggested fix:
-- Block 2 hours Thursday morning (your peak writing time)
-- Break into 4 smaller sub-tasks (increases completion probability 40%)
-- Defer two low-priority tasks to next week
-```
-
-**Behavioral Science**: Anticipated consequences change behavior. Early intervention prevents the "sunk cost fallacy" (continuing a doomed plan).
-
-**Why This Matters**: Catches problems before they become crises. Acts like a personal productivity coach who knows your patterns.
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React Native + Expo 54 + TypeScript |
+| UI | React Native Paper (Material Design 3) |
+| Backend | Supabase (PostgreSQL + Auth + RLS) |
+| State | React Context |
+| Navigation | React Navigation (bottom tabs + native stack) |
+| Haptics | expo-haptics |
+| Hosting | Vercel (web) |
 
 ---
 
-### 5. Goal-Aligned Progress Visualization
+## What's Different from Existing Apps
 
-**The Problem**: You complete 20 tasks but feel like you're not making progress on what matters.
-
-**The Solution**: Every task is linked to a larger goal. As you complete tasks, you see real-time impact on goal progress.
-
-**Visual Design**:
-```
-🎯 Goal: Get PM Internship (47% complete)
-
-Recent Progress:
-✅ Tailor resume for Google APM → +8% (portfolio strength)
-✅ Coffee chat with Meta PM → +5% (network strength)
-✅ Complete Rhythm Platform → +12% (portfolio strength)
-
-Next High-Impact Tasks:
-[ ] Write case study for Rhythm Platform → +10%
-[ ] Reach out to 5 Wharton alumni at target companies → +8%
-```
-
-**Behavioral Science**: Visible progress = motivation boost. Seeing "why this task matters" increases completion rates 30-40%.
-
-**Why This Matters**: Transforms todo list from chore collection to mission dashboard.
+| Capability | Todoist | Things | TickTick | DO |
+|------------|---------|--------|----------|-----|
+| Organize tasks | Yes | Yes | Yes | Yes |
+| Shows you a list | Yes | Yes | Yes | **No** |
+| Energy-aware recommendations | No | No | No | **Yes** |
+| Shame-free language | No | No | No | **Yes** |
+| Momentum (never resets) | No | No | No | **Yes** |
+| Time perception training | No | No | No | **Yes** |
+| Contextual celebrations | No | No | Partial | **Yes** |
 
 ---
 
-### 6. Work Styles Context Switching
+## Key Learnings
 
-**The Problem**: You're in "sprint mode" (tight deadline, high energy) but your todo list shows 100 tasks. Overwhelm.
+**1. Remove decisions, don't add features.** Most productivity apps fail because they add more options. More options = more paralysis. DO shows one task. That's the whole product bet.
 
-**The Solution**: Same tasks, different views based on mental state. One button switches between:
+**2. Ability is the reliable lever.** Product designers default to motivational features (streaks, badges, gamification). Motivation is fleeting. Making tasks match your current capacity is more effective.
 
-**Deep Work Mode**: Shows only tasks requiring >30 min uninterrupted focus
-**Sprint Mode**: Shows only urgent, high-impact tasks (filters out nice-to-haves)
-**Habit Mode**: Shows only recurring habits/routines (exercise, reading, etc.)
+**3. Shame compounds avoidance.** Every "overdue" badge, every broken streak, every red notification adds a brick to the Wall of Awful. Removing guilt from the system is a feature, not just nice language.
 
-**Example**:
-- Monday morning, high energy → Switch to Deep Work Mode → See: "Write blog post," "Code feature X"
-- Friday afternoon, low energy → Switch to Sprint Mode → See only critical deadline tasks
-- Sunday evening → Switch to Habit Mode → See: "Plan week," "Review goals"
-
-**Behavioral Science**: Context-dependent cues reduce cognitive load. Fewer visible options = less paralysis.
-
-**Why This Matters**: Adapts to you instead of forcing you to adapt to the app.
+**4. Ship the thesis, not the feature list.** The 15+ designed features are interesting. But the thesis, hiding the list and matching one task to your energy, is what makes DO different. Everything else is optimization on top of that bet.
 
 ---
 
-### 7. Task Dependency Intelligence
+## Current Status
 
-**The Problem**: Some tasks are blockers. Completing them unlocks 5 other tasks. But they don't look special in a flat list.
+Phase 1.5 is complete and deployed. The app is usable as a daily driver for task management. Phase 2 (Brain Dump, AI-powered task capture) is designed and spec'd but not started.
 
-**The Solution**: AI detects task dependencies (explicit or implicit) and surfaces "unblocking tasks" that enable the most downstream work.
-
-**Visual Indicator**:
-```
-🔓 High Leverage Task
-[ ] Get design feedback from Sarah
-
-This task unlocks:
-→ Finalize homepage mockup (blocked, waiting on feedback)
-→ Start development (blocked, waiting on design)
-→ Schedule user testing (blocked, waiting on prototype)
-
-Impact: Completing this unblocks 3 other tasks worth 8 hours of work.
-```
-
-**Behavioral Science**: Highlighting leverage increases motivation ("this 30-min task unlocks 8 hours of progress").
-
-**Why This Matters**: Helps you prioritize intelligently without manual dependency mapping.
-
----
-
-### 8. Micro-Goal Momentum System
-
-**The Problem**: Big goals feel overwhelming. "Write thesis" → close app, feel guilty.
-
-**The Solution**: AI automatically breaks large goals into micro-milestones with celebration triggers at each step.
-
-**Example**:
-```
-📚 Goal: Write Master's Thesis
-
-Milestone 1: Outline (COMPLETED ✅)
-→ Celebration: "You're 15% of the way there. Outline is the hardest part—it gets easier now."
-
-Milestone 2: Write Chapter 1 Draft
-→ Sub-milestones:
-   [✅] Introduction paragraph (Completed!)
-   [✅] Background section (Completed!)
-   [ ] Methodology section (Next: 2 hours estimated)
-→ Progress: 67% through Chapter 1
-
-Milestone 3: Get advisor feedback
-Milestone 4: Revisions
-...
-```
-
-**Behavioral Science**: Small wins trigger dopamine. Frequent celebrations maintain motivation through long projects.
-
-**Why This Matters**: Prevents the "abandoned big project" syndrome.
-
----
-
-### 9. Social Goal Witnesses (Not Micromanagement)
-
-**The Problem**: Accountability partners either micromanage ("Did you do it yet?") or are too hands-off.
-
-**The Solution**: Designate "witnesses" for specific goals. They see progress updates without seeing your task list.
-
-**Example**:
-```
-🎯 Goal: Launch side project
-Witnesses: Alex, Jordan
-
-They see:
-- "Amith made progress: 35% → 42% this week"
-- "Milestone completed: MVP design finished"
-
-They DON'T see:
-- Your individual tasks
-- When you worked
-- What you're behind on
-
-Weekly digest to witnesses:
-"Amith is 42% through 'Launch side project.' Completion projected: Feb 15."
-```
-
-**Behavioral Science**: Audience effect increases performance. Witnesses provide accountability without judgment.
-
-**Why This Matters**: Social accountability that respects privacy and autonomy.
-
----
-
-### 10. Implementation Intentions with Sensor Detection
-
-**The Problem**: "I'll work out when I get home" is a vague intention. Fails 70% of the time.
-
-**The Solution**: Context-locked Implementation Intentions using phone sensors.
-
-**Format**: "When [detected context], I will [specific action]"
-
-**Examples**:
-- "When I arrive home (GPS), I will change into workout clothes"
-- "When I open laptop between 9-10am (time + motion), I will write for 15 minutes"
-- "When I finish a meeting (calendar API), I will write down one action item"
-
-**Behavioral Science**: Implementation Intentions increase success rate 2-3x. Adding sensor detection makes them automatic.
-
-**Why This Matters**: Turns good intentions into automatic behaviors.
-
----
-
-## Additional Concepts (Not Detailed Here)
-
-The [FEATURE_CONCEPTS.md](./FEATURE_CONCEPTS.md) document includes 10+ more concepts:
-- **Fresh Start Effect triggers** (weekly, monthly, seasonal resets)
-- **Commitment Contracts with stakes** (lose $20 if you don't complete goal)
-- **Temporal Manipulation** (deadline compression, commitment ceremonies)
-- **Energy-Task Matching** (cognitive load vs current capacity)
-- **Rotating Accountability Pods** (3-4 people, weekly rotating "judge")
-- **Loss Aversion Streaks** ("Don't break your 47-day streak")
-- **A/B Testing Framework** (test which celebration types work best for you)
-
----
-
-## What Makes This Different from Existing Todo Apps
-
-| Feature | Todoist | Things | TickTick | This App |
-|---------|---------|--------|----------|----------|
-| Organize tasks | ✅ | ✅ | ✅ | ✅ |
-| Set priorities | ✅ | ✅ | ✅ | ✅ |
-| Track habits | ❌ | ❌ | ✅ | ✅ |
-| **Smart scheduling (AI-powered)** | ❌ | ❌ | ❌ | ✅ |
-| **"I have 15 min" contextual recs** | ❌ | ❌ | ❌ | ✅ |
-| **Psychological reframing** | ❌ | ❌ | ❌ | ✅ |
-| **Predictive failure warnings** | ❌ | ❌ | ❌ | ✅ |
-| **Goal-aligned progress** | ❌ | ❌ | ❌ | ✅ |
-| **Work styles modes** | ❌ | ❌ | ❌ | ✅ |
-| **Dependency intelligence** | ❌ | ❌ | ❌ | ✅ |
-| **Social witnesses** | ❌ | ❌ | ❌ | ✅ |
-
-**The key difference**: Traditional apps are **task organizers**. This is a **behavior change system** that happens to organize tasks.
-
----
-
-## Implementation Approach
-
-### Tech Stack Decisions
-
-**Frontend**: React Native + Expo + TypeScript
-- **Why**: True native mobile (not just web wrapper)
-- **Why Expo**: Simplified development, can test on iPhone immediately via Expo Go
-- **Why TypeScript**: Helps with skill rust (haven't coded in 1 year), better autocomplete
-
-**Backend**: Supabase (Free Tier)
-- **Why**: Zero cost requirement for MVP
-- **Why Supabase**: PostgreSQL (familiar from Microsoft data engineering background), built-in auth, real-time capabilities
-- **Why not custom backend**: Focus on product, not infrastructure
-
-**AI Integration**: Anthropic Claude API (with OpenAI fallback)
-- **Why**: Needed for psychological reframing, contextual recommendations, predictive warnings
-- **Why Claude**: Better at nuanced writing (reminders need to feel human)
-- **Cost**: Free tier for development, ~$10-20/month at scale
-
-**Development Approach**: Test-Driven Development (TDD)
-- **Why**: Learning Claude Code mastery through structured practice
-- **Why TDD**: Forces thinking through edge cases before coding
-- **Benefit**: Portfolio piece demonstrates disciplined engineering
-
-### Current Status
-
-**Phase 1: Foundation (85% Complete)**
-- ✅ Project initialized (React Native + Expo)
-- ✅ 15+ feature concepts documented ([FEATURE_CONCEPTS.md](./FEATURE_CONCEPTS.md))
-- ✅ Behavioral science principles researched and documented
-- ✅ Tech stack selected and justified
-- ✅ Database schema designed (goal-task linking, dependencies, productivity metrics)
-- 🚧 Supabase integration (setup complete, testing in progress)
-- 🚧 Basic task CRUD (create, read, update, delete)
-- 🚧 User authentication flow
-
-**Next Phases**:
-- **Phase 2**: Core behavioral features (Implementation Intentions, adaptive difficulty, celebration triggers)
-- **Phase 3**: AI features (psychological reframing, contextual recommendations, predictive warnings)
-- **Phase 4**: Advanced features (Smart Calendar Tetris, social witnesses, dependency intelligence)
-
-**Timeline**: Phase 1 complete by December 2025, MVP by February 2026
-
----
-
-## Key Learnings & PM Insights
-
-### 1. Behavioral Science Beats Features
-
-Most productivity apps fail because they add more features. But **more options = more paralysis**.
-
-The insight: **Remove decisions, add structure**. Don't give users 20 ways to organize tasks. Give them ONE smart recommendation based on behavioral science.
-
-### 2. Motivation is Unreliable, Ability is the Lever
-
-Product designers default to motivational features (streaks, badges, gamification). But motivation is fleeting.
-
-**The better approach**: Make tasks so tiny that motivation doesn't matter. "Write thesis" → "Write 1 sentence of outline."
-
-This is why "I Have 15 Minutes" is powerful—it matches task size to available ability RIGHT NOW.
-
-### 3. AI Should Explain, Not Just Recommend
-
-Early prototypes just recommended tasks: "Do this next." Users ignored them.
-
-**The fix**: Show reasoning. "Best time for this task: Tomorrow 9-11am (your peak focus window based on 30 days of data)."
-
-People trust AI more when it explains itself.
-
-### 4. Dark Psychology Can Be Ethical
-
-Psychological reframing uses persuasion tactics that marketers use to manipulate. Loss aversion, social pressure, identity framing—these work.
-
-**The ethical line**: User controls intensity. They choose "Gentle nudges" vs "Maximum pressure." The psychology serves them, not an advertiser.
-
-### 5. Mobile-First is Non-Negotiable for Habits
-
-Tried building this as a web app first. Wrong platform. Habits require:
-- Notifications (phone)
-- Location awareness (phone)
-- Portability (phone always with you)
-- Quick interactions (phone faster than laptop)
-
-Web apps can't compete for behavior change. Mobile is the only viable platform.
-
-### 6. Over-Engineering is the Enemy
-
-Initially designed 25+ features. Realized: **Shipping beats perfecting**.
-
-**The PM lesson**: Start with 3-5 core differentiators. Get users. Learn what matters. Kill 80% of features in backlog.
-
----
-
-## What's Next
-
-### Short-Term (Phase 1 Completion)
-- Finish Supabase integration
-- Complete basic task CRUD with tests
-- Ship MVP to TestFlight for personal use
-
-### Mid-Term (Phase 2-3)
-- Build 3-5 core behavioral features (Implementation Intentions, adaptive difficulty, goal-aligned progress)
-- Integrate AI (psychological reframing, contextual recommendations)
-- Dogfood: Use it daily for 30 days, document what works/doesn't work
-
-### Long-Term (Phase 4+)
-- Add advanced features (Smart Calendar Tetris, predictive warnings)
-- Social features (witnesses, accountability pods)
-- A/B test different celebration types (which triggers work best?)
-- Public beta with Wharton MBA students (target users who struggle with overwhelm)
-
-### If This Works
-- Pivot to funded product (behavioral science + AI is under-explored in productivity)
-- Partner with behavioral scientists for research validation
-- Publish findings: "What actually works for task completion"
-
----
-
-## Conclusion: A Todo App That Understands Humans
-
-Every feature in this app starts with the question: **"Why do people fail to complete tasks they genuinely want to do?"**
-
-The answer is never "they're lazy" or "they lack discipline." It's always:
-- They set tasks too big (ability problem)
-- They scheduled them at the wrong time (energy problem)
-- They didn't feel the urgency (motivation problem)
-- They forgot at the right moment (prompting problem)
-
-Behavioral science has solutions to all of these. But no productivity app applies them systematically.
-
-This app is designed to be the first todo app that doesn't just organize tasks—it **changes behavior**.
-
----
-
-**Read the full feature concepts**: [FEATURE_CONCEPTS.md](./FEATURE_CONCEPTS.md)
-**Project repository**: [GitHub](https://github.com/Amith1596/behavioral-todo-app) *(private)*
-**Tech stack details**: [README.md](../README.md)
-
-**Last Updated**: January 30, 2026
+**Last Updated**: March 2026

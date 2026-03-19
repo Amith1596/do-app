@@ -54,9 +54,45 @@ Built 5 behavioral features on top of the existing CRUD foundation:
 4. Task completion celebrations with haptic feedback
 5. Quick Add FAB
 
-**New files**: `src/utils/recommendations.ts`, `src/utils/celebrations.ts`, `src/hooks/useGoalProgress.ts`, `src/components/TimePickerModal.tsx`, `src/components/RecommendationCard.tsx`, `src/components/GoalProgressBar.tsx`
+**New files**: `src/utils/recommendations.ts`, `src/utils/celebrations.ts`, `src/hooks/useGoalProgress.ts`, `src/components/TimePickerModal.tsx`, `src/components/GoalProgressBar.tsx`
 
 **Database migration**: `supabase/migrations/002_behavioral_fields.sql` added `difficulty`, `parent_task_id`, `energy_level`, `started_at`, `completed_at`, `skip_count` to tasks table.
+
+### Session 5: Thesis Redesign (2026-02-22)
+
+Rewrote the product thesis and rebuilt the Focus screen from scratch. Shifted from "I Have X Minutes" (list-based recommender) to a true anti-list paradigm: one task at a time, energy-first.
+
+**Key changes:**
+- New `FocusScreen` — shows a single `FocusCard` instead of a filtered list
+- `EnergySelector` component — "How's your energy?" (Low / Steady / Wired) gates the Focus screen
+- `TimerView` — elapsed vs. estimated time comparison with shame-free messaging
+- `MomentumMeter` — 7-day rolling momentum bar with sparkline, never resets to zero
+- Energy-aware scoring in `recommendations.ts` — Low energy only surfaces easy/short tasks, Wired boosts hard tasks
+- Context batching — completing a goal-linked task boosts other tasks under the same goal
+- Seed data onboarding — 5 tasks that teach features by making you use them
+- Shame-free language throughout (no "overdue", "failed", or "missed")
+
+**Replaced**: `RecommendationCard.tsx` with `FocusCard.tsx` (card-based single-task UX instead of list item).
+
+### Session 6: Visual Polish (2026-03-04)
+
+Timer fixes, visual polish pass across all screens.
+
+### Session 7: Demo Quick Wins (2026-03-10 to 2026-03-15)
+
+Prepared the app for portfolio demos and live walkthroughs.
+
+**Changes:**
+- Updated app icon and favicon to match DO brand identity
+- Integrated app logo into login, signup, and header screens
+- Added in-app feedback button (links to external form)
+- Added help modal explaining how the app works
+- Improved FocusCard sizing and text readability
+- Fixed circular skip loop — skipping all tasks no longer causes an infinite cycle; the engine resets and re-recommends the best task
+
+### Session 8: Portfolio Close (2026-03-18)
+
+Merged all feature branches into main. Verified web build and TypeScript. Cleaned up 3 stale branches (local + remote). Updated documentation.
 
 ---
 
@@ -74,8 +110,9 @@ Built 5 behavioral features on top of the existing CRUD foundation:
 
 ## Known Limitations
 
-- Jest tests exist but were not maintained after behavioral features build (PRD said "do not attempt to fix")
-- No push notifications (requires Expo push setup + certificates)
-- No offline support (Supabase requires network)
-- No dark mode (theme config exists but not polished)
-- No onboarding flow
+- **Tests**: Jest config exists but tests were not maintained after the behavioral features build. Expo 54's runtime changes made the test setup fragile. Not worth fixing until Phase 2.
+- **No push notifications**: Requires Expo push setup + Apple certificates. Not needed for web-first deployment.
+- **No offline support**: All data flows through Supabase. No local cache or sync.
+- **No dark mode**: Theme config exists in `src/theme/` but only the light palette is polished.
+- **Web-only deployment**: Built with React Native for cross-platform, but only the web export is deployed (Vercel). Native builds (iOS/Android) are untested beyond Expo Go.
+- **No CI/CD**: Builds and deploys are manual (`npx expo export`, `npx vercel --prod`). No automated type checking or linting in pipeline.

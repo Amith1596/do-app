@@ -63,6 +63,7 @@ Every todo app shows you a list. Lists cause decision fatigue and overwhelm. DO 
 | `src/utils/momentum.ts` | Momentum calculation from task history |
 | `src/utils/celebrations.ts` | Celebration messages + haptics |
 | `src/types/index.ts` | Task, Goal, EnergyState, MomentumData, TimerSession |
+| `src/services/seedData.ts` | Guest mode onboarding seed tasks |
 | `src/navigation/AppNavigator.tsx` | Focus (home) > Tasks > Goals > Profile |
 
 ### Database Schema
@@ -83,10 +84,11 @@ AI-powered task capture: free-text brain dump → AI extracts structured tasks �
 
 ## Development Principles
 
-1. **TypeScript is the safety net** — zero type errors required
-2. **Shame-free language everywhere** — no "overdue", "failed", "missed"
-3. **Energy-first UX** — every task surface considers current energy state
-4. **Keep it simple** — working > polished
+1. **Shame-free language everywhere** — no "overdue", "failed", "missed" anywhere in user-facing text
+2. **Energy-first UX** — every task surface considers current energy state
+3. **Anti-list by default** — Focus screen is home; Tasks list is secondary
+4. **TypeScript strict** — zero type errors (`tsc --noEmit` must pass clean)
+5. **Manual deploy** — web build via `npx expo export --platform web`, deploy via `npx vercel --prod`. No CI/CD.
 
 ---
 

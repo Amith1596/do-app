@@ -102,7 +102,7 @@ Every feature in DO maps to a specific behavioral problem and the research behin
 
 **What we built**: After completing a task linked to a goal, the recommendation engine boosts other tasks under the same goal (+2 score). Finish one task toward "Learn Spanish"? The next recommendation is more likely to be another Spanish task. Momentum builds within a context, not across random domains.
 
-**Code**: `lastCompletedGoalId` logic in `src/utils/recommendations.ts` (lines 99-103)
+**Code**: `lastCompletedGoalId` logic in `src/utils/recommendations.ts`
 
 ---
 
