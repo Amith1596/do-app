@@ -2,9 +2,10 @@
 
 **Project**: DO (anti-list task app)
 **Type**: React Native + Expo mobile/web app
-**Status**: Phase 1.5 — Redesigned thesis, building
+**Status**: Phase 1.5 complete, deployed. Phase 2 (Brain Dump) planned.
+**Deployed**: [do-app.vercel.app](https://do-app.vercel.app)
 **Started**: 2025-11-12
-**Last Updated**: 2026-02-22
+**Last Updated**: 2026-03-18
 
 ---
 
@@ -26,6 +27,7 @@ Every todo app shows you a list. Lists cause decision fatigue and overwhelm. DO 
 | State | React Context (AuthContext, TasksContext, GoalsContext) |
 | Navigation | React Navigation (bottom tabs: Focus > Tasks > Goals > Profile) |
 | Haptics | expo-haptics |
+| Hosting | Vercel (web), manual deploy via `npx vercel --prod` |
 
 ---
 
@@ -103,3 +105,4 @@ See `docs/DEVELOPMENT_LOG.md` for session-by-session history.
 | 2026-02-22 | MVP behavioral features | "I Have X Minutes", celebrations, progress bars |
 | 2026-02-22 | Rebrand to "DO" | GitHub-ready packaging |
 | 2026-02-22 | **Thesis redesign** | Anti-list, energy-first, shame-free, momentum. New Focus screen, timer, energy selector. Competitive differentiation from Todoist/Things/Goblin.tools. |
+| 2026-03-18 | Demo polish + portfolio close | App icon, favicon, logo in auth screens, feedback button, help modal, FocusCard sizing/readability, skip loop fix. All branches merged to main. |
